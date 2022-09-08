@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>TeLlevoApp</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-body">
+    <span>Iniciar Sesión</span>
+    <ion-icon name="person-circle-outline" style="width: 16vh; height: 16vh; margin-top: 2vh;"></ion-icon>
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="iniciarsesion">
+      <ion-item>
+        <ion-label position="floating">Correo Institucional</ion-label>
+        <ion-input required name="correo" clear-input mode="ios"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" required name="password" clear-input mode="ios"></ion-input>
+      </ion-item>
+      <ion-button expand="block" class="ion-margin-top loginbutton" type="submit">
+        Iniciar Sesión
+      </ion-button>
+    </form>
+    <div class="form-footer">
+      <div>
+        <span>¿No tienes una cuenta? Regístrate </span> <a routerLink="/register">aquí</a>
+      </div>
+      <a>¿Olvidaste tu contraseña?</a>
+    </div>
+  </div>
+</ion-content>
