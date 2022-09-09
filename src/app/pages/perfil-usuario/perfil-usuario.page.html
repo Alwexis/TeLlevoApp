@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>perfilUsuario</ion-title>
+  </ion-toolbar>
+</ion-header>
+<img class="hellokittyicon" src="./assets/hellokitty.png">
+<ion-item>
+  <ion-label position="floating">Nombre Completo</ion-label>
+  <ion-input type="text" name="nombre" mode="ios" required clear-input pattern="([a-zA-ZñÑÀ-ÖØ-öø-ÿ ]+)"></ion-input>
+</ion-item>
+
+<ion-item>
+<ion-label position="floating">RUT</ion-label>
+        <!-- Con Número
+        <ion-input type="number" required name="rut" clear-input mode="ios" placeholder="209197219"></ion-input>
+        -->
+        <ion-input #rut="ngModel" [(ngModel)]="credenciales.rut" type="text" pattern="([0-9]{1,2})\.([0-9]{3})\.([0-9]{3})-([0-9]|k)" required name="rut" clear-input mode="ios" placeholder="20.919.721-9"></ion-input>
+      </ion-item>
+<ion-content>
+
+</ion-content>
