@@ -25,6 +25,7 @@ export class RegisterPage implements OnInit {
 
   conductorChange() {
     this.credenciales.conductor ? document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: flex;") : document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: none;");
+    //this.credenciales.conductor ? document.getElementsByClassName('patenteInput')[0].setAttribute("required", "true") : document.getElementsByClassName('patenteInput')[0].setAttribute("required", "false")
     /*
     Lo de arriba es lo mismo que la condición de abajo, sólo que usé algo llamado "Operador Ternario".
     Pregunta si tienes dudas.
@@ -40,6 +41,9 @@ export class RegisterPage implements OnInit {
     */
   }
 
+  
+  // Esto esta malo y hay que preguntarle al profe como arreglarlo XD.
+  /*
   async fetchData(url: string) {
     const response = await fetch(url);
     const data = await response.text();
@@ -53,4 +57,5 @@ export class RegisterPage implements OnInit {
     const data = cheerio.load(rawData);
     console.log(data);
   }
+  */
 }
