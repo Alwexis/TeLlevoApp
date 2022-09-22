@@ -1,20 +1,56 @@
+<!-- Header -->
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-icon slot="start" name="menu" size="large" class="ion-padding" (click)="verMenu()"></ion-icon>
     <ion-title>
-      Blank
+      TeLlevoApp
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+<!-- Menú -->
+<ion-menu side="start" menuId="menu" contentId="main">
+  <ion-header>
+    <ion-toolbar color="dark">
+      <ion-title>Menu</ion-title>
+      <ion-icon slot="end" name="close" size="large" class="ion-padding" (click)="cerrarMenu()"></ion-icon>
     </ion-toolbar>
   </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <ion-content>
+    <ion-list>
+      <!-- 
+      <ion-item detail routerLink="/home" (click)="cerrarMenu()">
+        <ion-icon slot="start" name="home-outline"></ion-icon>
+        Inicio
+      </ion-item>
+      -->
+      <ion-item detail (click)="changePage('/perfil')">
+        <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+        Perfil
+      </ion-item>
+      <ion-item detail (click)="changePage('/perfil')">
+        <ion-icon slot="start" name="book-outline"></ion-icon>
+        Viajes
+      </ion-item>
+      <ion-item detail (click)="changePage('/programar-viaje')" *ngIf="usuario.patente != ''">
+        <ion-icon slot="start" name="car-outline"></ion-icon>
+        Programar Viaje
+      </ion-item>
+      <ion-item detail (click)="changePage('/login')">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Salir
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-router-outlet id="main"></ion-router-outlet>
+<!-- Main -->
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="content-body">
+    <span class="title">Bienvenido/a, {{usuario.nombre}}</span>
+    <div style="margin-top: 6vh; display: flex; flex-direction: column;">
+      <span class="buscas-viaje">¿Buscas un Viaje?</span>
+      <span style="margin-top: 0.5vh;">Explora los viajes disponibles</span>
+    </div>
+    <span> OWO </span>
   </div>
 </ion-content>

@@ -10,16 +10,17 @@
 <ion-content class="ion-padding">
   <div class="page-body">
     <span>Registro de Usuario</span>
-    <form #registerform="ngForm" (ngSubmit)="onSubmit()" class="registrarse">
+    <form name="registerform" #registerform="ngForm" (ngSubmit)="onSubmit()" class="registrarse">
       <ion-item>
         <ion-label position="stacked">Correo Institucional</ion-label>
         <div class="correo-input">
-          <ion-input required name="correo" clear-input mode="ios" [(ngModel)]="credenciales.correo" placeholder="je.conuel"></ion-input>
+          <ion-input required name="correo" clear-input mode="ios" [(ngModel)]="credenciales.correo"
+            placeholder="je.conuel"></ion-input>
           <ion-list>
             <ion-item>
-              <ion-select interface="popover" value="alumno">
+              <ion-select interface="popover" value="alumno" #extensioncorreo="ngModel" [(ngModel)]="credenciales.rawExtension" name="extensioncorreo">
                 <ion-select-option value="alumno">@duocuc.cl</ion-select-option>
-                <ion-select-option value="profesor">@profesorduoc.cl</ion-select-option>
+                <ion-select-option value="profesor">@profesor.duoc.cl</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
@@ -27,38 +28,87 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating">RUT</ion-label>
-        <!-- Con Número
-        <ion-input type="number" required name="rut" clear-input mode="ios" placeholder="209197219"></ion-input>
-        -->
-        <ion-input #rut (ionBlur)="getPersonalInformationByRut(rut.value)" [(ngModel)]="credenciales.rut" type="text" pattern="([0-9]{1,2})\.([0-9]{3})\.([0-9]{3})-([0-9]|k)" required name="rut" clear-input mode="ios" placeholder="20.919.721-9"></ion-input>
+        <ion-input #rut="ngModel" [(ngModel)]="credenciales.rut" type="text"
+          pattern="([0-9]{1,2})\.([0-9]{3})\.([0-9]{3})-([0-9]|k)" required name="rut" clear-input mode="ios"
+          placeholder="20.919.721-9"></ion-input>
       </ion-item>
+      <div *ngIf="rut.hasError('pattern')" class="formControl-errormsg ion-padding">
+        <ion-icon class="formControl-erroricon" name="alert-circle-outline"></ion-icon>
+        Ingresa el rut con puntos y guión.
+      </div>
       <ion-item>
         <ion-label position="floating">Nombre Completo</ion-label>
-        <ion-input [(ngModel)]="credenciales.nombre" type="text" name="nombre" mode="ios" readonly="true" disabled></ion-input>
+        <ion-input #nombre="ngModel" [(ngModel)]="credenciales.nombre" type="text" name="nombre" mode="ios" required
+          clear-input pattern="([a-zA-ZñÑÀ-ÖØ-öø-ÿ ]+)"></ion-input>
       </ion-item>
+      <div *ngIf="nombre.hasError('pattern')" class="formControl-errormsg ion-padding">
+        <ion-icon class="formControl-erroricon" name="alert-circle-outline"></ion-icon>
+        Tu nombre no debe contener números ni símbolos.
+      </div>
       <ion-item>
         <ion-label position="floating">Contraseña</ion-label>
-        <ion-input [(ngModel)]="credenciales.contrasena" type="password" name="contraseña" mode="ios" required clear-input></ion-input>
+        <ion-input #contrasena="ngModel" [(ngModel)]="credenciales.contrasena" type="password" name="contrasena"
+          mode="ios" required clear-input></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Confirmar Contraseña</ion-label>
-        <ion-input type="password" name="contraseña2" mode="ios" required clear-input></ion-input>
+        <ion-input type="password" name="contrasena2" #contrasena2="ngModel" [(ngModel)]="credenciales.contrasena2"
+          mode="ios" required clear-input></ion-input>
       </ion-item>
+      <div *ngIf="checkPasswords(contrasena.value, contrasena2.value)" class="formControl-errormsg ion-padding">
+        <ion-icon class="formControl-erroricon" name="alert-circle-outline"></ion-icon>
+        Las contraseñas no coinciden.
+      </div>
       <ion-item>
-        <ion-checkbox (ionChange)="conductorChange()" slot="start" [(ngModel)]="credenciales.conductor" name="conductor"></ion-checkbox>
+        <ion-checkbox (ionChange)="conductorChange()" slot="start" [(ngModel)]="credenciales.conductor"
+          name="conductor"></ion-checkbox>
         <ion-label>¿Eres conductor?</ion-label>
       </ion-item>
       <ion-item class="patenteInput">
         <ion-label position="floating">Patente</ion-label>
-        <ion-input [(ngModel)]="credenciales.patente" type="text" pattern="([a-zA-ZñÑ]{2})\-([a-zA-ZñÑ]{2})\-([0-9]{2})" name="patente" clear-input mode="ios" placeholder="aa-bb-12"></ion-input>
+        <ion-input #patente="ngModel" [(ngModel)]="credenciales.patente" type="text" name="patente" mode="ios"
+          clear-input pattern="([a-zA-ZñÑ]{2})-(([a-zA-ZñÑ]|[0-9]){2})-([0-9]{2})" placeholder="aa-bb-12"></ion-input>
       </ion-item>
+      <div *ngIf="patente.hasError('pattern')" class="formControl-errormsg ion-padding">
+        <ion-icon class="formControl-erroricon" name="alert-circle-outline"></ion-icon>
+        Ingresa la patente con el siguiente formato aa-bb-12.
+      </div>
       <ion-item>
-        <ion-checkbox required slot="start" name="condiciones"></ion-checkbox>
+        <ion-checkbox required slot="start" #condiciones="ngModel" [(ngModel)]="credenciales.condiciones"
+          name="condiciones"></ion-checkbox>
         <ion-label><a>¿Aceptas los términos y condiciones?</a></ion-label>
       </ion-item>
-      <ion-button expand="block" class="ion-margin-top crear-cuenta" type="submit" [disabled]="registerform.invalid" >
+      <div *ngIf="!condiciones.value" class="formControl-errormsg ion-padding">
+        <ion-icon class="formControl-erroricon" name="alert-circle-outline"></ion-icon>
+        Debes aceptar los términos y condiciones.
+      </div>
+      <ion-button id="open-modal" expand="block" class="ion-margin-top crear-cuenta" (click)="lastStepRegistration()" [disabled]="registerform.invalid || !condiciones.value">
         Crear Cuenta
       </ion-button>
+      <!-- Modal -->
+      <ion-modal trigger="open-modal" name="modal" id="modal">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="modalActions('close')">Cancelar</ion-button>
+              </ion-buttons>
+              <ion-title>Completar Registro</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="modalActions('accept')" [strong]="true">Confirmar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-item>
+              <p>Se ha enviado un código al correo {{credenciales.correo}}{{credenciales.extension}}</p>
+              <ion-label position="stacked">Ingresa el Código</ion-label>
+              <ion-input type="text" placeholder="XXXXXX" #inputcodigo="ngModel" [(ngModel)]="credenciales.codigo" name="inputcodigo"></ion-input>
+            </ion-item>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <!-- Fin Modal -->
     </form>
   </div>
 </ion-content>
