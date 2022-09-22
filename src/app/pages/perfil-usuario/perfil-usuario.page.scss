@@ -1,0 +1,87 @@
+.contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.contenido img {
+    width: 18vh;
+    height: 18vh;
+    border-radius: 10vh;
+    border: 1.5px solid black;
+}
+
+.informacion-personal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 4vh;
+    padding: 2vh;
+    border: 1px solid rgba(158, 158, 158, 0.8);
+    background-color: rgb(233 232 232);
+    filter: drop-shadow(-10px 0px 10px #B2B2B2);
+    width: 80%;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.info-perso-label {
+    font-size: 2vh;
+    font-weight: 600;
+    border-bottom: 1px black solid;
+}
+
+.info-perso-value {
+    font-size: 2.5vh;
+    font-weight: 400;
+    font-style: italic;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+}
+
+.editar-perfil {
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    background-color: #8BEA7B;
+    color: black;
+    border-radius: 2vh;
+}
+
+#file-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+#file-input {
+    color: transparent;
+}
+
+#file-input::before {
+    margin-top: 1vh;
+    content: 'Seleccionar fotos';
+    color: black;
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-weight: 700;
+    font-size: 10pt;
+}
+
+.foto-perfil {
+    width: 12vh;
+    height: 12vh;
+}

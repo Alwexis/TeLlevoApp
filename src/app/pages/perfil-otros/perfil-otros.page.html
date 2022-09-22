@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button mode="ios" text="Volver" default-href="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>TeLlevoApp</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="body-page">
+    <!-- Imagen del Usuario -->
+    <img src="https://i.pinimg.com/564x/fd/2e/b1/fd2eb14b99702200b2b1807dffbe4792.jpg">
+    <span class="nombreUsuario">Jenniffer Coñuel</span>
+    <!-- Reputación -->
+    <section style="margin-top: 1.5vh; text-align: center;">
+      <span style="font-size: 2.5vh; font-weight: 600; border-bottom: 1px solid;">Reputación</span>
+      <div class="calificacion">
+      </div>
+    </section>
+    <!-- Información del Usuario -->
+    <section style="margin-top: 4vh; display: flex; flex-direction: column; align-items: center; justify-self: center;">
+      <span style="font-size: 2.5vh; font-weight: 600;">Información del Usuario</span>
+      <div class="informacion-usuario">
+        <div>
+          <span class="info-user-titulo">Nombres:</span> <span>Jenniffer Constanza</span>
+        </div>
+        <div>
+          <span class="info-user-titulo">Apellidos:</span> <span>Coñuel Ramos</span>
+        </div>
+        <div>
+          <span class="info-user-titulo">Rut:</span> <span>21.144.450-9</span>
+        </div>
+        <div>
+          <span class="info-user-titulo">Número:</span> <span>9 4052 9144</span>
+        </div>
+        <!-- Agregar información del Conductor / Patente -->
+      </div>
+    </section>
+    <!-- Reportar Usuario -->
+    <ion-button id="open-modal" expand="block" fill="clear" shape="round" class="reportar-usuario">
+      <ion-icon name="alert-circle" style="margin-right: 1vh;"></ion-icon> Reportar Usuario
+    </ion-button>
+    <!-- Modal -->
+    <ion-modal trigger="open-modal" name="modal" id="modal">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button (click)="closeModal()" style="color: red;">Cancelar</ion-button>
+            </ion-buttons>
+            <ion-title>Reportar</ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <div class="form-content">
+            <!-- Cambiar Jenniffer Coñuel por el nombre del usuario -->
+            <span style="font-size: 2.75vh; font-weight: 600;">Reportar a Jenniffer Coñuel</span>
+            <span style="font-style: italic; text-align: center; word-break: break-word; margin-top: 2vh; margin-bottom: 2vh;">
+              Recuerda que reportar de manera falsa o con malas intenciones es motivo de sanción.
+            </span>
+            <form name="reportform" #reportform="ngForm" (ngSubmit)="onSubmit(reportform)">
+              <ion-item style="margin-top: 2vh;">
+                <ion-label position="stacked">Motivo del Reporte</ion-label>
+                <ion-select required name="motivo" #motivo [(ngModel)]="reporte.motivo" placeholder="Selecciona un Motivo">
+                  <ion-select-option value="1">Mal uso de la App</ion-select-option>
+                  <ion-select-option value="2">Anuncio Fraudulento</ion-select-option>
+                  <ion-select-option value="3">Mala conducta</ion-select-option>
+                  <ion-select-option value="4">No es un conductor</ion-select-option>
+                  <ion-select-option value="5">No pertenece a DuocUC</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item style="margin-top: 6vh;">
+                <ion-label position="stacked">Descripción</ion-label>
+                <ion-textarea required name="descripcion" placeholder="¿Qué hizo el usuario?" #descripcion [(ngModel)]="reporte.descripcion"></ion-textarea>
+              </ion-item>
+              <ion-button [disabled]="reportform.invalid" type="submit" expand="block" fill="clear" shape="round" style="margin-top: 2.5vh; color: red;">
+                Reportar
+              </ion-button>
+            </form>
+          </div>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </div>
+</ion-content>

@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button mode="ios" text="Volver" default-href="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>TeLlevoApp</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-body">
+    <span class="titulo">Recuperar Contraseña</span>
+    <span class="instrucciones-txt">Por favor ingrese su correo electrónico asociado a la cuenta para hacer el envio de un código de autorización.</span>
+    <form name="recuperarcontrasena" #recuperarcontrasena="ngForm" (ngSubmit)="onSubmit(recuperarcontrasena)">
+      <!-- Obtener el Código -->
+      <ion-item>
+        <ion-label position="floating">Correo Institucional</ion-label>
+        <ion-input required name="correo" #correo="ngModel" [(ngModel)]="datos.correo" clear-input mode="ios" pattern=".*(@duocuc.cl|@profesor.duoc.cl)"></ion-input>
+      </ion-item>
+      <ion-button [disabled]="recuperarcontrasena.invalid" (click)="generateCode()" expand="block" fill="clear">
+        Obtener código
+      </ion-button>
+      <!-- Ingresar el Código -->
+      <ion-item *ngIf="codigoAutorizacion != ''" style="margin-top: 2vh; margin-bottom: 4vh;">
+        <ion-label position="stacked">Código de Autorización</ion-label>
+        <ion-input required name="codigo" #codigo="ngModel" [(ngModel)]="datos.codigo" clear-input mode="ios"></ion-input>
+      </ion-item>
+      <!-- Cambiar contraseña -->
+      <div style="border-top: 1px solid black; padding: 2vh; text-align: center;" *ngIf="(codigoAutorizacion != '' && datos.codigo != '') && datos.codigo == codigoAutorizacion">
+        <span style="font-style: italic;">Ingresa la nueva contraseña que desees tener.</span>
+        <ion-item>
+          <ion-label position="floating">Nueva Contraseña</ion-label>
+          <ion-input type="password" clear-input required name="contrasena" #contrasena="ngModel" [(ngModel)]="datos.contrasena" clear-input mode="ios"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Confirmar Contraseña</ion-label>
+          <ion-input type="password" clear-input required name="contrasena2" #contrasena2="ngModel" [(ngModel)]="datos.contrasena2" clear-input mode="ios"></ion-input>
+        </ion-item>
+        <ion-button type="submit" [disabled]="datos.contrasena != datos.contrasena2 || datos.contrasena == ''" expand="block" fill="clear" style="margin-top: 2vh;">
+          Cambiar contraseña
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

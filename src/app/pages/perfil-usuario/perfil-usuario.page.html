@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="" routerLink="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
+    <ion-icon slot="end" routerLink="/login" class="ion-padding" size="large" name="log-out-outline"></ion-icon>
+  </ion-toolbar>
+</ion-header>
+<!-- Contenido -->
+<ion-content class="ion-padding">
+  <div class="contenido">
+    <img src="{{usuario.foto}}">
+    <div class="informacion-personal">
+      <section class="info-block">
+        <span class="info-perso-label">Nombre Completo</span>
+        <span class="info-perso-value">{{usuario.nombre}}</span>
+      </section>
+      <section class="info-block">
+        <span class="info-perso-label">Rut</span>
+        <span class="info-perso-value">{{usuario.rut}}</span>
+      </section>
+      <section class="info-block">
+        <span class="info-perso-label">Correo</span>
+        <span class="info-perso-value">{{usuario.correo}}</span>
+      </section>
+      <section class="info-block">
+        <span class="info-perso-label">Teléfono</span>
+        <span class="info-perso-value">9 5252 2525</span>
+      </section>
+      <section class="info-block" *ngIf="usuario.patente != ''">
+        <span class="info-perso-label">Patente</span>
+        <span class="info-perso-value">{{usuario.patente}}</span>
+      </section>
+      <ion-button id="open-modal" class="editar-perfil" expand="block" fill="clear" shape="round">
+        Editar perfil
+      </ion-button>
+    </div>
+  </div>
+  <!-- Modal -->
+  <ion-modal trigger="open-modal" name="modal" id="modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button style="color: red;">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Editar Perfil</ion-title>
+          <ion-buttons slot="end">
+            <ion-button [strong]="true" style="color: lime;">Confirmar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <span style="border-bottom: 1px solid black;">Cambiar Foto de Perfil</span>
+        <div style="display: flex; flex-direction: row; margin-bottom: 2vh; margin-top: 1vh;">
+          <img src="{{usuario.foto}}" class="foto-perfil"
+            *ngIf="usuario.foto != '' || usuario.foto != undefined; else noFoto">
+          <ng-template #noFoto>
+            <img src="https://pbs.twimg.com/media/EEUy6MCU0AErfve.png" class="foto-perfil"
+              *ngIf="usuario.foto != '' || usuario.foto != undefined; else noFoto">
+          </ng-template>
+          <ion-item>
+            <ion-label position="stacked">Foto de Perfil</ion-label>
+            <input type="file" (change)="loadImageFromDevice($event)" id="file-input" accept="image/png, image/jpeg">
+          </ion-item>
+        </div>
+        <span style="border-bottom: 1px solid black;">Cambiar Número de Teléfono</span>
+        <ion-item style="margin-bottom: 2vh; margin-top: 1vh;">
+          <ion-label position="stacked">Número de Teléfono</ion-label>
+          <ion-input type="number" placeholder="940529144"></ion-input>
+        </ion-item>
+        <span style="border-bottom: 1px solid black;">Cambiar Contraseña</span>
+        <ion-item style="margin-bottom: 2vh; margin-top: 1vh;">
+          <ion-label position="stacked">Contraseña</ion-label>
+          <ion-input type="password"></ion-input>
+          <ion-label position="stacked">Repetir Contraseña</ion-label>
+          <ion-input type="password"></ion-input>
+        </ion-item>
+        <span *ngIf="usuario.patente == ''; else alreadyDriverMsg" style="border-bottom: 1px solid black;">Convertirse
+          en conductor</span>
+        <ion-item *ngIf="usuario.patente == ''; else alreadyDriver">
+          <ion-button expand="block" fill="clear" shape="round"
+            style="margin-bottom: 2vh; margin-top: 1vh; color: lime;" (click)="changeDriverStatus()">
+            Estoy seguro
+          </ion-button>
+        </ion-item>
+        <ng-template #alreadyDriverMsg>
+          <span style="border-bottom: 1px solid black;">¿Dejar de ser conductor?</span>
+        </ng-template>
+        <ng-template #alreadyDriver>
+          <ion-item #alreadyDriver>
+            <ion-button expand="block" fill="clear" shape="round"
+              style="margin-bottom: 2vh; margin-top: 1vh; color: red;" (click)="changeDriverStatus()">
+              Estoy seguro
+            </ion-button>
+          </ion-item>
+        </ng-template>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <!-- Fin Modal -->
+</ion-content>

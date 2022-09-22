@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button mode="ios" text="Volver" default-href="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      TeLlevoApp
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="content-body">
+    <section *ngIf="usuario.patente != ''">
+      <ion-item>
+        <div style="display: flex; flex-direction: column; align-items: center; margin: 0vh 4vh;">
+          <ion-icon name="list-outline" style="width: 4vh; height: 4vh;"></ion-icon>
+          <ion-label>Todos los Viajes</ion-label>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; margin: 0vh 4vh;" (click)="changePage('tus-viajes')">
+          <ion-icon name="car-outline" style="width: 4vh; height: 4vh;"></ion-icon>
+          <ion-label>Tus Viajes</ion-label>
+        </div>
+      </ion-item>
+    </section>
+    <div>
+      <ion-button (click)="onClick()" expand="block" fill="clear" shape="round" style="color: black; border: 1px solid; border-radius: 2.5vh; margin: 2vh 0vh;">
+        <ion-icon name="filter-outline" style="margin-right: 1.5vh;"></ion-icon> <span>Filtros</span>
+      </ion-button>
+    </div>
+    <section class="resumen-lista-viajes">
+      <ion-item>
+        <div class="resumen-lista-viajes-viaje">
+          <span style="font-size: 1.75vh;">22/09 - 18:50</span>
+          <span style="margin: 1vh 0vh; font-weight: 600;">Los Copihues, Talcahuano</span>
+          <span>$1500 (3 disponibles)</span>
+          <ion-button expand="block" fill="clear" shape="round" style="color: lime; font-size: 2vh;">
+            Agendar
+          </ion-button>
+        </div>
+      </ion-item>
+      <ion-item>
+        <div class="resumen-lista-viajes-viaje">
+          <span style="font-size: 1.75vh;">22/09 - 18:50</span>
+          <span style="margin: 1vh 0vh; font-weight: 600;">Leonera, Chiguayante</span>
+          <span>$3200 (2 disponibles)</span>
+          <ion-button expand="block" fill="clear" shape="round" style="color: lime; font-size: 2vh;">
+            Agendar
+          </ion-button>
+        </div>
+      </ion-item>
+    </section>
+  </div>
+</ion-content>
