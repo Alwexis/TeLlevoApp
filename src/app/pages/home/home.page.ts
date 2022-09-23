@@ -14,6 +14,7 @@ export class HomePage {
     nombre: '',
     patente: '',
     foto: '',
+    viaje: -1,
   }
 
   constructor(private router: Router,

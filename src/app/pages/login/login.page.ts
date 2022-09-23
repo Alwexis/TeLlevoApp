@@ -20,6 +20,7 @@ export class LoginPage implements OnInit {
     nombre: '',
     patente: '',
     foto: '',
+    viaje: -1,
   }
 
   constructor(private router: Router, private alertController: AlertController, private modalCtrl: ModalController) { }
@@ -47,7 +48,7 @@ export class LoginPage implements OnInit {
       this.usuario.rut = '20.144.450-9';
       this.usuario.patente = '';
       this.usuario.foto = 'https://i.pinimg.com/564x/fd/2e/b1/fd2eb14b99702200b2b1807dffbe4792.jpg'
-
+      this.usuario.viaje = 1;
       let navigationExtras: NavigationExtras = {
         state: {
           usuario: this.usuario,
