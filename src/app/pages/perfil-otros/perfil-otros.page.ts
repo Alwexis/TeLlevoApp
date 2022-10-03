@@ -16,7 +16,7 @@ export class PerfilOtrosPage implements OnInit {
     descripcion: ''
   }
 
-  constructor(private modalCtrl: ModalController, private alertController: AlertController) { }
+  constructor(private _modalCtrl: ModalController, private _alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.loadQualification();
@@ -36,11 +36,11 @@ export class PerfilOtrosPage implements OnInit {
   }
 
   async closeModal() {
-    await this.modalCtrl.dismiss('modal', 'cancelar')
+    await this._modalCtrl.dismiss('modal', 'cancelar')
   }
 
   async onSubmit(form: NgForm) {
-    const alert = await this.alertController.create({
+    const alert = await this._alertCtrl.create({
       header: '¡Éxito!',
       subHeader: 'Reportaste con éxito',
       message: 'Has reportado con éxito al usuario Jenniffer Coñuel. Presiona "OK" para volver a su Perfil.',

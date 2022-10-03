@@ -15,7 +15,7 @@
         <ion-label position="stacked">Correo Institucional</ion-label>
         <div class="correo-input">
           <ion-input required name="correo" clear-input mode="ios" [(ngModel)]="credenciales.correo"
-            placeholder="je.conuel"></ion-input>
+            placeholder="je.conuel" pattern="^([a-zA-Z]+)\.([a-zA-Z]+)[^@]"></ion-input>
           <ion-list>
             <ion-item>
               <ion-select interface="popover" value="alumno" #extensioncorreo="ngModel" [(ngModel)]="credenciales.rawExtension" name="extensioncorreo">
@@ -51,7 +51,6 @@
           mode="ios" required clear-input></ion-input>
       </ion-item>
       <ion-item>
-      -->
         <ion-label position="floating">Confirmar Contraseña</ion-label>
         <ion-input type="password" name="contrasena2" #contrasena2="ngModel" [(ngModel)]="credenciales.contrasena2"
           mode="ios" required clear-input></ion-input>
@@ -95,9 +94,6 @@
                 <ion-button (click)="modalActions('close')">Cancelar</ion-button>
               </ion-buttons>
               <ion-title>Completar Registro</ion-title>
-              <ion-buttons slot="end">
-                <ion-button (click)="modalActions('accept')" [strong]="true">Confirmar</ion-button>
-              </ion-buttons>
             </ion-toolbar>
           </ion-header>
           <ion-content class="ion-padding">
@@ -106,6 +102,9 @@
               <ion-label position="stacked">Ingresa el Código</ion-label>
               <ion-input type="text" placeholder="XXXXXX" #inputcodigo="ngModel" [(ngModel)]="credenciales.codigo" name="inputcodigo"></ion-input>
             </ion-item>
+            <ion-button (click)="register()" expand="block" fill="clear" shape="round">
+              Confirmar
+            </ion-button>
           </ion-content>
         </ng-template>
       </ion-modal>

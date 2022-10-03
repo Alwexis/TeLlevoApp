@@ -19,7 +19,7 @@ export class RecuperarContrasenaPage implements OnInit {
 
   codigoAutorizacion = '';
 
-  constructor(private router: Router, private alertController: AlertController) { }
+  constructor(private _router: Router, private _alertCtrl: AlertController) { }
 
   ngOnInit() {
   }
@@ -32,7 +32,7 @@ export class RecuperarContrasenaPage implements OnInit {
   }
 
   async onSubmit(form: NgForm) {
-    const alert = await this.alertController.create({
+    const alert = await this._alertCtrl.create({
       header: '¡Éxito!',
       subHeader: 'Cambiaste tu contraseña',
       message: 'Has cambiado tu contraseña con éxito. Volverás al menú de inicio de sesión al apretar "OK".',
@@ -41,7 +41,7 @@ export class RecuperarContrasenaPage implements OnInit {
           text: 'OK',
           role: 'ok',
           handler: () => {
-            this.router.navigate(['/login']);
+            this._router.navigate(['/login']);
             form.reset();
           },
       }],

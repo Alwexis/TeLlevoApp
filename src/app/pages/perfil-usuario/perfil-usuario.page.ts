@@ -11,11 +11,12 @@ export class PerfilUsuarioPage implements OnInit {
 
   usuario;
 
-  constructor(private modalCtrl: ModalController, private router: Router, private activatedRouter: ActivatedRoute,
-    private alertController: AlertController, private toastController: ToastController) {
-    this.activatedRouter.queryParams.subscribe(() => {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.usuario = this.router.getCurrentNavigation().extras.state.usuario;
+  constructor(private _modalCtrl: ModalController, private _router: Router,
+    private _activatedRouter: ActivatedRoute, private _alertCtrl: AlertController,
+    private _toastCtrl: ToastController) {
+    this._activatedRouter.queryParams.subscribe(() => {
+      if (this._router.getCurrentNavigation().extras.state) {
+        this.usuario = this._router.getCurrentNavigation().extras.state.usuario;
       }
     })
   }
@@ -24,13 +25,13 @@ export class PerfilUsuarioPage implements OnInit {
   }
 
   tabButtonChangePage(page) {
-    this.router.navigate([page], this.usuario);
+    this._router.navigate([page], this.usuario);
   }
 
   async changeDriverStatus() {
     if (this.usuario.patente != '') {
       this.usuario.patente = ''
-      const alert = await this.alertController.create({
+      const alert = await this._alertCtrl.create({
         header: '¡Hasta pronto!',
         subHeader: 'Dejaste de ser Conductor',
         message: 'Decidiste dejar de ser conductor, lamentamos esa decisión, pero esperamos que vuelvas pronto. Presiona "OK" para continuar.',
@@ -40,14 +41,14 @@ export class PerfilUsuarioPage implements OnInit {
           role: 'confirm',
           handler: () => {
             alert.dismiss();
-            this.modalCtrl.getTop().then(modal => modal.dismiss());
+            this._modalCtrl.getTop().then(modal => modal.dismiss());
             this.tabButtonChangePage('perfil');
           },
         }],
       });
       await alert.present();
     } else {
-      const alert = await this.alertController.create({
+      const alert = await this._alertCtrl.create({
         header: '¡Sólo queda un paso!',
         //subHeader: '',
         message: 'Para ser conductor, debes ingresar la patente de tu medio de transporte (incluyendo guiones). Presiona "OK" para continuar una vez lo hayas hecho. Por otro lado, preciona "cancelar" para volver al perfil.',
@@ -69,7 +70,7 @@ export class PerfilUsuarioPage implements OnInit {
             if (formato.test(alertData.patente)) {
               this.usuario.patente = alertData.patente.toUpperCase();
               this.sendToast('¡Bienvenido a bordo! Ahora eres conductor de TeLlevoApp.');
-              this.modalCtrl.getTop().then(modal => modal.dismiss());
+              this._modalCtrl.getTop().then(modal => modal.dismiss());
               this.tabButtonChangePage('perfil');
             } else {
               this.sendToast('Ha ocurrido un error procesando la patente.');
@@ -93,7 +94,7 @@ export class PerfilUsuarioPage implements OnInit {
   }
 
   async sendToast(msg) {
-    const toast = await this.toastController.create({
+    const toast = await this._toastCtrl.create({
       message: msg,
       duration: 3000,
     });

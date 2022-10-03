@@ -1,7 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm, Validators } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
+import { Usuario } from 'src/app/interfaces/usuario';
+import { Usuarios } from 'src/app/interfaces/usuarios';
+import { AuthService } from 'src/app/services/auth.service';
+import { EncrypterService } from 'src/app/services/encrypter.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-register',
@@ -24,21 +29,23 @@ export class RegisterPage implements OnInit {
     codigo: '',
   }
 
-  usuario = {
-    correo: '',
-    rut: '',
-    nombre: '',
-    patente: '',
-  }
+  usuario: Usuario;
+  userData: Usuarios;
 
   codigo;
 
-  //@ViewChild('pwConfirmModel') pwConfirmModel: NgModel;
   @ViewChild('registerform') registerform: NgForm;
 
-  constructor(private modalCtrl: ModalController, private router: Router) { }
+  constructor(private _modalCtrl: ModalController, private _router: Router,
+    private _storage: StorageService, private _toastCtrl: ToastController,
+    private _auth: AuthService) { }
 
   ngOnInit() {
+    this.loadData();
+  }
+
+  async loadData() {
+    this.userData = await this._storage.getData('usuarios');
   }
 
   conductorChange() {
@@ -62,47 +69,80 @@ export class RegisterPage implements OnInit {
     return false;
   }
 
-  lastStepRegistration() {
+  async lastStepRegistration() {
     this.credenciales.extension = this.credenciales.rawExtension == 'alumno' ? '@duocuc.cl' : '@profesor.duoc.cl';
-    this.codigo = Math.random().toString(36).substring(2,9).toUpperCase();
-    console.log(this.codigo);
-  }
-  
-  async modalActions(type) {
-    if (type.toLowerCase() == 'close') {
-      await this.modalCtrl.dismiss('modal', 'cancelar')
-    } else if (type.toLowerCase() == 'accept') {
-      if (this.credenciales.codigo == this.codigo) {
-        this.usuario.correo = this.credenciales.correo + this.credenciales.extension;
-        this.usuario.nombre = this.credenciales.nombre;
-        this.usuario.rut = this.credenciales.rut;
-        this.usuario.patente = this.credenciales.conductor ? this.credenciales.patente : '';
- 
-        let navigationExtras: NavigationExtras = {
-          state: {
-            usuario: this.usuario,
+    if (!this.userData.users.has(this.credenciales.correo + this.credenciales.extension)) {
+      this.codigo = Math.random().toString(36).substring(2, 9).toUpperCase();
+      console.log(this.codigo);
+    } else {
+      const toast = await this._toastCtrl.create({
+        message: '¡Error! Ya existe un usuario con ese correo',
+        icon: 'close-circle-outline',
+        duration: 3000,
+        buttons: [
+          {
+            text: 'Cerrar',
+            role: 'cerrar',
+            icon: 'close-circle-outline',
+            handler: () => {
+              toast.dismiss('ok');
+            }
           }
-        }
-        this.router.navigate(['/home'], navigationExtras)
-        await this.modalCtrl.dismiss('modal', 'aceptar')
+        ]
+      });
+      await toast.present();
+      await this._modalCtrl.dismiss('modal', 'cancelar')
+    }
+  }
+
+  async register() {
+    if (this.codigo == this.credenciales.codigo) {
+      let wasRegistered = await this._auth.registerUser(this.credenciales);
+      if (wasRegistered) {
+        await this._modalCtrl.dismiss('modal')
+        const toast = await this._toastCtrl.create({
+          message: '¡Bienvenido a bordo!',
+          icon: 'happy-outline',
+          duration: 3000,
+          buttons: [
+            {
+              text: 'Ver tu Perfil',
+              role: 'perfil',
+              icon: 'person-circle-outline',
+              handler: () => {
+                toast.dismiss('ok');
+                this._modalCtrl.dismiss('modal', 'cancelar');
+                this._router.navigate(['perfil-usuario']);
+              }
+            }
+          ]
+        });
+        await toast.present();
+      } else {
+        await this._modalCtrl.dismiss('modal', 'cancelar');
+        const toast = await this._toastCtrl.create({
+          message: '¡Error! Ya existe un usuario con ese correo',
+          icon: 'close-circle-outline',
+          duration: 3000,
+          buttons: [
+            {
+              text: 'Cerrar',
+              role: 'cerrar',
+              icon: 'close-circle-outline',
+              handler: () => {
+                toast.dismiss('ok');
+              }
+            }
+          ]
+        });
+        await toast.present();
       }
     }
   }
 
-  // Esto esta malo y hay que preguntarle al profe como arreglarlo XD.
-  /*
-  async fetchData(url: string) {
-    const response = await fetch(url);
-    const data = await response.text();
-    return data;
+  async modalActions(type) {
+    if (type.toLowerCase() == 'close') {
+      await this._modalCtrl.dismiss('modal', 'cancelar')
+    }
   }
-
-  async getPersonalInformationByRut(rut) {
-    console.log(rut)
-    const rawData = await this.fetchData("https://www.nombrerutyfirma.com/rut?term=" + rut);
-    // parsing the data
-    const data = cheerio.load(rawData);
-    console.log(data);
-  }
-  */
 }

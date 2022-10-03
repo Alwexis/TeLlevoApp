@@ -31,7 +31,7 @@
         <ion-icon slot="start" name="book-outline"></ion-icon>
         Viajes
       </ion-item>
-      <ion-item detail (click)="changePage('/programar-viaje')" *ngIf="usuario.patente != ''">
+      <ion-item detail (click)="changePage('/programar-viaje')" *ngIf="session.patente != ''">
         <ion-icon slot="start" name="car-outline"></ion-icon>
         Programar Viaje
       </ion-item>
@@ -46,7 +46,7 @@
 <!-- Main -->
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="content-body">
-    <span class="title">Bienvenido/a, {{usuario.nombre}}</span>
+    <span class="title">Bienvenido/a, {{session.nombre}}</span>
     <div style="margin-top: 6vh; display: flex; flex-direction: column;">
       <span class="buscas-viaje">¿Buscas un Viaje?</span>
       <span style="margin-top: 0.5vh;">Explora los viajes disponibles</span>

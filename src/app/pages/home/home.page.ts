@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { Session } from 'protractor';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -8,40 +10,23 @@ import { MenuController } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  usuario = {
-    correo: '',
-    rut: '',
-    nombre: '',
-    patente: '',
-    foto: '',
-  }
+  session: Session = this._auth.getSession();
 
-  constructor(private router: Router,
-    private activatedRouter: ActivatedRoute,
-    private menu: MenuController) {
-    this.activatedRouter.queryParams.subscribe(() => {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.usuario = this.router.getCurrentNavigation().extras.state.usuario;
-      }
-    })
+  constructor(private _router: Router, private _menu: MenuController,
+    private _auth: AuthService) {
   }
 
   changePage(page) {
-    let navigationExtras: NavigationExtras = {
-      state: {
-        usuario: this.usuario,
-      }
-    }
-    this.menu.close('menu');
-    page == '/login' ? this.router.navigate([page]) : this.router.navigate([page], navigationExtras);
+    this._menu.close('menu');
+    page == '/login' ? this._router.navigate([page]) : this._router.navigate([page]);
   }
 
   verMenu() {
-    this.menu.open('menu');
+    this._menu.open('menu');
   }
 
   cerrarMenu() {
-    this.menu.close('menu');
+    this._menu.close('menu');
   }
 
 }
