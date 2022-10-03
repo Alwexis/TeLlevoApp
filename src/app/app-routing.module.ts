@@ -35,6 +35,14 @@ const routes: Routes = [
     path: 'programar-viaje',
     loadChildren: () => import('./pages/programar-viaje/programar-viaje.module').then( m => m.ProgramarViajePageModule)
   },
+  {
+    path: 'viajes',
+    loadChildren: () => import('./pages/viajes/viajes.module').then( m => m.ViajesPageModule)
+  },
+  {
+    path: 'tus-viajes',
+    loadChildren: () => import('./pages/tus-viajes/tus-viajes.module').then( m => m.TusViajesPageModule)
+  },
 ];
 
 @NgModule({

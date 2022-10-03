@@ -42,8 +42,36 @@
 .buscas-viaje {
   font-weight: 600;
   font-size: 3vh;
-  /* max-width: 80%; */
   word-break: break-word;
   white-space: pre-line;
   text-align: center;
+}
+
+.viaje-title {
+  font-weight: 600;
+  font-size: 2.2vh;
+  border-bottom: 1px solid;
+  margin-bottom: 1.5vh;
+  padding-bottom: 0.5vh;
+  text-align: center;
+}
+
+.viaje-content-title {
+  border-bottom: 1px solid;
+  margin-right: 0.5vh;
+}
+
+.resumen-lista-viajes {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2vh;
+}
+
+.resumen-lista-viajes-viaje {
+  display: flex;
+  flex-direction: column;
+  margin: 2vh 0vh;
+  border: 0.25px solid;
+  padding: 1vh;
+  width: 100%;
 }
