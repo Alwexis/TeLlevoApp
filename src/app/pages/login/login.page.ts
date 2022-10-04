@@ -25,21 +25,6 @@ export class LoginPage implements OnInit {
   }
 
   async onSubmit() {
-    let auth = await this._auth.login(this.credenciales);
-    const alert = await this._alertCtrl.create({ header: '¡Error!', buttons: ['OK'], mode: 'ios', cssClass: 'datoserroneos', });
-    switch (auth) {
-      case LoginState.USER_NOT_FOUND:
-        alert.subHeader = 'Usuario no encontrado';
-        alert.message = 'El correo electrónico que ha ingresado no está registrado. Por favor, intente nuevamente.';
-        await alert.present();
-        break;
-      case LoginState.BAD_CREDENTIALS:
-        alert.subHeader = 'Usuario y/o contraseña incorrectos';
-        alert.message = 'Los datos que ha ingresado son incorrectos. Por favor, intente nuevamente.';
-        await alert.present();
-        break;
-      default:
-        break;
-    }
+    await this._auth.login(this.credenciales);
   }
 }

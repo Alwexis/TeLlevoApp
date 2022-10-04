@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Usuario } from './interfaces/usuario';
+import { AuthService } from './services/auth.service';
 import { StorageService } from './services/storage.service';
 
 @Component({
@@ -8,15 +9,19 @@ import { StorageService } from './services/storage.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor(private _storage: StorageService) {
-
+  constructor(private _storage: StorageService, private _auth: AuthService) {
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     // If using a custom driver:
     //await this.storage.defineDriver(MyCustomDriver)
     //await this._storage.create();
-    this._storage.init();
+    this.loadData();
+  }
+
+  async loadData() {
+    await this._storage.init();
+    await this._auth.loadData();
   }
   
 }
