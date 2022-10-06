@@ -33,7 +33,16 @@ export class AuthService {
     if (this.session == null) {
       this.session = await this._storage.getData('session');
     }
-    return this.session;
+    let user: Usuario = {
+      correo: this.session['correo'],
+      rut: this.session['rut'],
+      nombre: this.session['nombre'],
+      contrasena: this.session['contrasena'],
+      patente: this.session['patente'],
+      foto: this.session['foto'],
+      viaje: this.session['viaje']
+    }
+    return user;
   }
 
   async logout() {
@@ -48,22 +57,19 @@ export class AuthService {
   }
 
   async login(credentials: {}) {
-    // USER_NOT_FOUND -> Usuario no existe
-    // BAD_CREDENTIALS -> Datos erroneos
-    // LOGGED_IN -> Logeado correctamente :]
     const alert = await this._alertCtrl.create({ header: '¡Error!', buttons: ['OK'], mode: 'ios', cssClass: 'datoserroneos', });
     if (this.userData.users.has(credentials['correo'])) {
       let user: Usuario = this.userData.users.get(credentials['correo']) as Usuario;
       this._encrypt.encrypt(credentials['contrasena']).subscribe(async (encryptedPwd) => {
         if (user.contrasena == encryptedPwd['Digest']) {
           this.session = await this._storage.addData('session', user);
-          this._router.navigate(['/home']);
           let toast = await this._toastCtrl.create({
             message: '¡Bienvenido de vuelta!',
             duration: 2000,
             icon: 'enter-outline'
           });
           await toast.present();
+          this._router.navigate(['/home']);
           return LoginState.LOGGED_IN;
         } else {
           alert.subHeader = 'Usuario y/o contraseña incorrectos';

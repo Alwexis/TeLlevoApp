@@ -1,16 +1,19 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button text="" routerLink="/home"></ion-back-button>
+      <ion-back-button routerLink="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Perfil</ion-title>
-    <ion-icon slot="end" routerLink="/login" class="ion-padding" size="large" name="log-out-outline"></ion-icon>
+    <ion-icon slot="end" (click)="_auth.logout()" class="ion-padding" size="large" name="log-out-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 <!-- Contenido -->
 <ion-content class="ion-padding">
   <div class="contenido">
-    <img src="{{usuario.foto}}">
+    <img src="{{usuario.foto}}" *ngIf="usuario.foto != ''; else noFoto">
+    <ng-template #noFoto>
+      <img src="../../../assets/hellokitty.png">
+    </ng-template>
     <div class="informacion-personal">
       <section class="info-block">
         <span class="info-perso-label">Nombre Completo</span>
@@ -26,7 +29,7 @@
       </section>
       <section class="info-block">
         <span class="info-perso-label">Teléfono</span>
-        <span class="info-perso-value">9 5252 2525</span>
+        <span class="info-perso-value">N/A</span>
       </section>
       <section class="info-block" *ngIf="usuario.patente != ''">
         <span class="info-perso-label">Patente</span>
@@ -43,22 +46,18 @@
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-button style="color: red;">Cancelar</ion-button>
+            <ion-button style="color: red;" (click)="closeModal()">Cancelar</ion-button>
           </ion-buttons>
           <ion-title>Editar Perfil</ion-title>
-          <ion-buttons slot="end">
-            <ion-button [strong]="true" style="color: lime;">Confirmar</ion-button>
-          </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
         <span style="border-bottom: 1px solid black;">Cambiar Foto de Perfil</span>
         <div style="display: flex; flex-direction: row; margin-bottom: 2vh; margin-top: 1vh;">
           <img src="{{usuario.foto}}" class="foto-perfil"
-            *ngIf="usuario.foto != '' || usuario.foto != undefined; else noFoto">
+            *ngIf="usuario.foto != ''; else noFoto">
           <ng-template #noFoto>
-            <img src="https://pbs.twimg.com/media/EEUy6MCU0AErfve.png" class="foto-perfil"
-              *ngIf="usuario.foto != '' || usuario.foto != undefined; else noFoto">
+            <img src="../../../assets/hellokitty.png" class="foto-perfil">
           </ng-template>
           <ion-item>
             <ion-label position="stacked">Foto de Perfil</ion-label>
@@ -96,6 +95,9 @@
             </ion-button>
           </ion-item>
         </ng-template>
+        <ion-button (click)="saveData()" expand="block" fill="clear" shape="round">
+          Guardar cambios
+        </ion-button>
       </ion-content>
     </ng-template>
   </ion-modal>

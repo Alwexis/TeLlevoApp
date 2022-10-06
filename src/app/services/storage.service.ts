@@ -23,8 +23,12 @@ export class StorageService {
   }
 
   async removeData(key, index) {
-    const storedData = await this._storage.get(key) || [];
-    storedData.splice(index, 1);
-    return this._storage.set(key, storedData);
+    const storedData = await this._storage.get(key);
+    if (storedData.constructor.toString().toLowerCase().indexOf('array') > -1) {
+      storedData.splice(index, 1);
+      return this._storage.set(key, storedData);
+    } else {
+      await this._storage.remove(key);
+    }
   }
 }
