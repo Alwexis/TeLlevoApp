@@ -75,3 +75,11 @@
     align-content: center;
     align-items: center;
 }
+
+[ng-reflect-disabled=true] {
+    color: red;
+}
+
+[ng-reflect-disabled=false] {
+    color: lime;
+}

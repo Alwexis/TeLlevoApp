@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm, Validators } from '@angular/forms';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular';
-import { Usuario } from 'src/app/interfaces/usuario';
-import { Usuarios } from 'src/app/interfaces/usuarios';
+import { Usuario, Usuarios } from 'src/app/interfaces/usuarios';
 import { AuthService } from 'src/app/services/auth.service';
-import { EncrypterService } from 'src/app/services/encrypter.service';
 import { StorageService } from 'src/app/services/storage.service';
 
 @Component({

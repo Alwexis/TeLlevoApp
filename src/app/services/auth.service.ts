@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Usuario } from '../interfaces/usuario';
-import { Usuarios } from '../interfaces/usuarios';
+import { Usuario, Usuarios } from '../interfaces/usuarios';
 import { EncrypterService } from './encrypter.service';
 import { StorageService } from './storage.service';
 import { LoginState } from '../enums/login-state';
@@ -40,7 +39,8 @@ export class AuthService {
       contrasena: this.session['contrasena'],
       patente: this.session['patente'],
       foto: this.session['foto'],
-      viaje: this.session['viaje']
+      viaje: this.session['viaje'],
+      numero: this.session['numero'],
     }
     return user;
   }
@@ -94,7 +94,8 @@ export class AuthService {
       contrasena: '',
       patente: credentials['patente'] || '',
       foto: '',
-      viaje: null
+      viaje: null,
+      numero: null,
     }
     if (!this.userData.users.has(user.correo)) {
       this._encrypt.encrypt(credentials['contrasena']).subscribe(async (data) => {
@@ -108,5 +109,20 @@ export class AuthService {
     } else {
       return false;
     }
+  }
+
+  async updateUser(user: Usuario) {
+    this.userData.users.set(user.correo, user);
+    await this._storage.addData('usuarios', this.userData);
+    await this._storage.addData('session', user);
+  }
+
+  async changePassword(user: Usuario, password) {
+    this._encrypt.encrypt(password).subscribe(async (data) => {
+      user.contrasena = data['Digest'];
+      this.userData.users.set(user.correo, user);
+      await this._storage.addData('usuarios', this.userData);
+      await this._storage.addData('session', user);
+    });
   }
 }

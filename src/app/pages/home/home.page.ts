@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
-import { Usuario } from 'src/app/interfaces/usuario';
+import { Usuario } from 'src/app/interfaces/usuarios';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -18,6 +18,7 @@ export class HomePage {
     patente: '',
     foto: '',
     viaje: null,
+    numero: null
   };
 
   constructor(private _router: Router, private _menu: MenuController,

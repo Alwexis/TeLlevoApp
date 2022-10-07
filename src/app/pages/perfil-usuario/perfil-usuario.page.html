@@ -29,7 +29,7 @@
       </section>
       <section class="info-block">
         <span class="info-perso-label">Teléfono</span>
-        <span class="info-perso-value">N/A</span>
+        <span class="info-perso-value">{{usuario.numero}}</span>
       </section>
       <section class="info-block" *ngIf="usuario.patente != ''">
         <span class="info-perso-label">Patente</span>
@@ -61,20 +61,20 @@
           </ng-template>
           <ion-item>
             <ion-label position="stacked">Foto de Perfil</ion-label>
-            <input type="file" (change)="loadImageFromDevice($event)" id="file-input" accept="image/png, image/jpeg">
+            <input type="file" (change)="changeImage($event)" id="file-input" accept="image/png, image/jpeg">
           </ion-item>
         </div>
         <span style="border-bottom: 1px solid black;">Cambiar Número de Teléfono</span>
         <ion-item style="margin-bottom: 2vh; margin-top: 1vh;">
           <ion-label position="stacked">Número de Teléfono</ion-label>
-          <ion-input type="number" placeholder="940529144"></ion-input>
+          <ion-input type="number" name="numero" [(ngModel)]="changes.numero" placeholder="940529144"></ion-input>
         </ion-item>
         <span style="border-bottom: 1px solid black;">Cambiar Contraseña</span>
         <ion-item style="margin-bottom: 2vh; margin-top: 1vh;">
           <ion-label position="stacked">Contraseña</ion-label>
-          <ion-input type="password"></ion-input>
+          <ion-input type="password" #pass name="password" [(ngModel)]="changes.password"></ion-input>
           <ion-label position="stacked">Repetir Contraseña</ion-label>
-          <ion-input type="password"></ion-input>
+          <ion-input type="password" #pass2 name="password2" [(ngModel)]="changes.password2"></ion-input>
         </ion-item>
         <span *ngIf="usuario.patente == ''; else alreadyDriverMsg" style="border-bottom: 1px solid black;">Convertirse
           en conductor</span>
