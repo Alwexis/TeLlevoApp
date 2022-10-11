@@ -6,7 +6,7 @@ import { ViajesService } from './services/viajes.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
+  styleUrls: ['app.component.scss']
 })
 export class AppComponent {
   constructor(private _storage: StorageService, private _auth: AuthService,

@@ -41,7 +41,7 @@
 <!-- Main -->
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="content-body">
-    <span class="title">Bienvenido/a, {{usuario.nombre}}</span>
+    <span (click)="test()" class="title">Bienvenido/a, {{usuario.nombre}}</span>
     <div *ngIf="usuario.viaje != null; else doesntHaveViaje"
       style="margin-top: 6vh; display: flex; flex-direction: column;">
       <ion-item>

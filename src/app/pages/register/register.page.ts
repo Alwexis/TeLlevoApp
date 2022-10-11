@@ -71,7 +71,8 @@ export class RegisterPage implements OnInit {
     this.credenciales.extension = this.credenciales.rawExtension == 'alumno' ? '@duocuc.cl' : '@profesor.duoc.cl';
     if (!this.userData.users.has(this.credenciales.correo + this.credenciales.extension)) {
       this.codigo = Math.random().toString(36).substring(2, 9).toUpperCase();
-      console.log(this.codigo);
+      console.log('Este es el código. Pero prueba ir a tu correo <3 ' + this.codigo);
+      await this._auth.verifyMail(this.credenciales.correo + this.credenciales.extension, this.codigo);
     } else {
       const toast = await this._toastCtrl.create({
         message: '¡Error! Ya existe un usuario con ese correo',

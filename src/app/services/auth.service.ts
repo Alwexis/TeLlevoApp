@@ -6,6 +6,8 @@ import { LoginState } from '../enums/login-state';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Session } from '../interfaces/session';
+import { HttpClient } from '@angular/common/http';
+import { DbService } from './db.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,8 @@ export class AuthService {
   session: Session;
 
   constructor(private _storage: StorageService, private _encrypt: EncrypterService,
-    private _router: Router, private _toastCtrl: ToastController, private _alertCtrl: AlertController) {
+    private _router: Router, private _toastCtrl: ToastController, private _alertCtrl: AlertController,
+    private _http: HttpClient, private _db: DbService) {
   }
 
   async loadData() {
@@ -103,6 +106,7 @@ export class AuthService {
         this.userData.users.set(user.correo, user);
         await this._storage.addData('usuarios', this.userData);
         await this._storage.addData('session', user);
+        this._db.insertOne('usuarios', user);
         this._router.navigate(['/home']);
       });
       return true;
@@ -123,6 +127,13 @@ export class AuthService {
       this.userData.users.set(user.correo, user);
       await this._storage.addData('usuarios', this.userData);
       await this._storage.addData('session', user);
+    });
+  }
+
+  async verifyMail(email: string, code: string) {
+    let url = 'http://localhost:3000/send-mail';
+    return this._http.post(url, { type: 'verify', to: email, code: code }).subscribe(d => {
+      console.log('Data: ' + d)
     });
   }
 }

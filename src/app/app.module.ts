@@ -17,7 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
     IonicStorageModule.forRoot({
        name: 'tellevoapp',
     }),
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

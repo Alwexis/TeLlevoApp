@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { Usuario } from 'src/app/interfaces/usuarios';
 import { AuthService } from 'src/app/services/auth.service';
+import { DbService } from 'src/app/services/db.service';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,7 @@ export class HomePage {
   };
 
   constructor(private _router: Router, private _menu: MenuController,
-    private _auth: AuthService) {
+    private _auth: AuthService, private _db: DbService) {
       this.loadData();
   }
 
@@ -37,6 +38,15 @@ export class HomePage {
   async changePage(page) {
     this._menu.close('menu');
     page == '/login' ? await this._auth.logout() : this._router.navigate([page]);
+  }
+
+  test() {
+    this._db.get('Usuarios', ['numero=940529144']).subscribe(response => {
+      console.log(response);
+    })
+    //this._db.updateOne('Usuarios', ['correo=owo'], { correo: 'fa.olate@duocuc.cl' }).subscribe(e => {
+    //  console.log(e);
+    //})
   }
 
   verMenu() {
