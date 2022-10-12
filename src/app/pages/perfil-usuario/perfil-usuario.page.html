@@ -65,9 +65,13 @@
           </ion-item>
         </div>
         <span style="border-bottom: 1px solid black;">Cambiar Número de Teléfono</span>
-        <ion-item style="margin-bottom: 2vh; margin-top: 1vh;">
+        <ion-item style="margin-bottom: 0.15vh; margin-top: 1vh;">
           <ion-label position="stacked">Número de Teléfono</ion-label>
           <ion-input type="number" name="numero" [(ngModel)]="changes.numero" placeholder="940529144"></ion-input>
+        </ion-item>
+        <ion-item style="margin-bottom: 2vh; margin-top: 0.15vh;">
+          <ion-label position="stacked">Código SMS</ion-label>
+          <ion-input type="text" name="codigo" [(ngModel)]="changes.codigo" placeholder="XXXXXX"></ion-input>
         </ion-item>
         <span style="border-bottom: 1px solid black;">Cambiar Contraseña</span>
         <ion-item style="margin-bottom: 2vh; margin-top: 1vh;">

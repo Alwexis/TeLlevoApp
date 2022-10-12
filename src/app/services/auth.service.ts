@@ -8,6 +8,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { Session } from '../interfaces/session';
 import { HttpClient } from '@angular/common/http';
 import { DbService } from './db.service';
+import { deprecate } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class AuthService {
     private _http: HttpClient, private _db: DbService) {
   }
 
+  // ! Hay que actualizar todo el servicio para hacerlo en torno a MongoDB (db.service.ts)
   async loadData() {
     this.session = await this._storage.getData('session');
     this.userData = await this._storage.getData('usuarios');
@@ -133,6 +135,13 @@ export class AuthService {
   async verifyMail(email: string, code: string) {
     let url = 'http://localhost:3000/send-mail';
     return this._http.post(url, { type: 'verify', to: email, code: code }).subscribe(d => {
+      console.log('Data: ' + d)
+    });
+  }
+
+  async verifyPhone(phone: number, code: string) {
+    let url = 'http://localhost:3000/send-sms';
+    return this._http.post(url, { type: 'verify', phone: phone, code: code }).subscribe(d => {
       console.log('Data: ' + d)
     });
   }

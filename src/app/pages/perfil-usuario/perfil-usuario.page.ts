@@ -26,9 +26,12 @@ export class PerfilUsuarioPage implements OnInit {
 
   changes = {
     numero: null,
+    codigo: null,
     password: '',
     password2: ''
   }
+
+  codigo;
 
   constructor(private _modalCtrl: ModalController, private _router: Router,
     private _alertCtrl: AlertController, private _toastCtrl: ToastController,
@@ -124,9 +127,6 @@ export class PerfilUsuarioPage implements OnInit {
   }
 
   saveData() {
-    if (this.changes.numero != null && this.changes.numero != this.usuario.numero) {
-      this.usuario.numero = this.changes.numero;
-    }
     if (this.changes.password != '' && this.changes.password != null) {
       if (this.changes.password == this.changes.password2) {
         this._auth.changePassword(this.usuario, this.changes.password);
@@ -138,6 +138,12 @@ export class PerfilUsuarioPage implements OnInit {
     this._auth.updateUser(this.usuario);
     this.closeModal();
     this._router.navigate(['/perfil']);
+  }
+
+  async changeNumber() {
+    if (this.changes.numero != null && this.changes.numero != this.usuario.numero) {
+      //this.usuario.numero = this.changes.numero;
+    }
   }
 
   changeImage(e) {
