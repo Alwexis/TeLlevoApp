@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Usuario } from '../interfaces/usuarios';
 import { Viaje, Viajes } from '../interfaces/viajes';
 import { StorageService } from './storage.service';
-import { Valoracion } from '../interfaces/valoracion';
 import { ViajeStatus } from '../enums/viaje-status';
 
 @Injectable({
@@ -17,12 +16,20 @@ export class ViajesService {
   async init() {
     this.viajesData = await this._storage.getData('viajes'); 
     if (this.viajesData == undefined || this.viajesData == null) {
-      this.viajesData = await this._storage.addData('viajes', { viajes: new Map<string, Viaje>() });
+      this.viajesData = await this._storage.addData('viajes', { viajes: new Map<string, Viaje>(), lastId: 0 });
     }
   }
 
   getFrom(user: Usuario) {
-    return [...this.viajesData.viajes.values()].filter(viaje => viaje.conductor.correo == user.correo);
+    let viajes = [];
+    this.viajesData.viajes.forEach(viaje => {
+      if (viaje.conductor.correo === user.correo) {
+        viajes.push(viaje);
+      }
+    })
+    return viajes;
+    //* Probar el return de abajo
+    //? [...this.viajesData.viajes.values()].filter(viaje => viaje.conductor.correo == user.correo)
   }
 
   get() {
@@ -34,14 +41,10 @@ export class ViajesService {
   }
 
   async scheduleViaje(viaje: {}) {
-    let lastId;
-    if (this.viajesData.viajes.size > 0) {
-      lastId = [...this.viajesData.viajes.values()].sort(viaje => viaje.id)[this.viajesData.viajes.size - 1].id;
-    } else { lastId = 1; }
+    this.viajesData.lastId++;
     let newViaje: Viaje = {
-      id: lastId,
+      id: this.viajesData.lastId,
       fecha: viaje['fecha'],
-      hora: viaje['hora'],
       destino: viaje['destino'],
       precio: viaje['precio'],
       capacidad: viaje['capacidad'],
@@ -50,8 +53,8 @@ export class ViajesService {
       pasajeros: [],
       valoraciones: [],
       estatus: ViajeStatus.PENDING,
-    } 
-    this.viajesData.viajes.set(lastId.toString(), newViaje);
+    }
+    this.viajesData.viajes.set(this.viajesData.lastId.toString(), newViaje);
     let added = await this._storage.addData('viajes', this.viajesData);
     return added != null;
   }

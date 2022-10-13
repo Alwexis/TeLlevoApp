@@ -126,12 +126,23 @@ export class PerfilUsuarioPage implements OnInit {
     }
   }
 
-  saveData() {
-    if (this.changes.password != '' && this.changes.password != null) {
-      if (this.changes.password == this.changes.password2) {
-        this._auth.changePassword(this.usuario, this.changes.password);
-      } else {
-        this.sendToast('Las contraseñas no coinciden.');
+  saveData(whatWasDeleted?: string) {
+    if (whatWasDeleted) {
+      if (whatWasDeleted == 'numero') {
+        this.usuario.numero = null;
+      } else if (whatWasDeleted == 'foto') {
+        this.usuario.foto = '';
+      }
+    } else {
+      if (this.changes.numero != null && this.changes.numero != this.usuario.numero) {
+        this.usuario.numero = this.changes.numero;
+      }
+      if (this.changes.password != '' && this.changes.password != null) {
+        if (this.changes.password == this.changes.password2) {
+          this._auth.changePassword(this.usuario, this.changes.password);
+        } else {
+          this.sendToast('Las contraseñas no coinciden.');
+        }
       }
     }
     // Photo
@@ -140,18 +151,13 @@ export class PerfilUsuarioPage implements OnInit {
     this._router.navigate(['/perfil']);
   }
 
-  async changeNumber() {
-    if (this.changes.numero != null && this.changes.numero != this.usuario.numero) {
-      //this.usuario.numero = this.changes.numero;
-    }
-  }
-
   changeImage(e) {
     let foto = e.target.files[0];
     let reader = new FileReader();
     reader.readAsDataURL(foto);
     reader.onload = () => {
       this.usuario.foto = reader.result.toString();
+      this._auth.updateUser(this.usuario);
     };
     reader.onerror = function (error) {
       console.log('Error: ', error);

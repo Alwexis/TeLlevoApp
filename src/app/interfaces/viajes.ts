@@ -5,12 +5,12 @@ import { Valoracion } from "./valoracion";
 
 export interface Viajes {
     viajes: Map<string, Viaje>;
+    lastId: number;
 }
 
 export interface Viaje {
     id: number;
     fecha: Date;
-    hora: Time;
     destino: string;
     precio: number;
     capacidad: number;
