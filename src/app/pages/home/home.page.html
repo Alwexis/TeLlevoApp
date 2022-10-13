@@ -17,12 +17,6 @@
   </ion-header>
   <ion-content>
     <ion-list>
-      <!-- 
-      <ion-item detail routerLink="/home" (click)="cerrarMenu()">
-        <ion-icon slot="start" name="home-outline"></ion-icon>
-        Inicio
-      </ion-item>
-      -->
       <ion-item detail (click)="changePage('/perfil')">
         <ion-icon slot="start" name="person-circle-outline"></ion-icon>
         Perfil
@@ -35,7 +29,7 @@
         <ion-icon slot="start" name="car-outline"></ion-icon>
         Programar Viaje
       </ion-item>
-      <ion-item detail (click)="changePage('/login')">
+      <ion-item detail (click)="_auth.logout()">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>
         Salir
       </ion-item>
@@ -48,7 +42,7 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="content-body">
     <span class="title">Bienvenido/a, {{usuario.nombre}}</span>
-    <div *ngIf="usuario.viaje != -1; else doesntHaveViaje"
+    <div *ngIf="usuario.viaje != null; else doesntHaveViaje"
       style="margin-top: 6vh; display: flex; flex-direction: column;">
       <ion-item>
         <div style="display: flex; flex-direction: column;">

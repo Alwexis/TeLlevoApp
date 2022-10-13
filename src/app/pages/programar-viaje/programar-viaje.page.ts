@@ -1,7 +1,12 @@
 import { Time } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { text } from 'cheerio/lib/api/manipulation';
+import { Usuario } from 'src/app/interfaces/usuarios';
+import { Viaje } from 'src/app/interfaces/viajes';
+import { AuthService } from 'src/app/services/auth.service';
+import { ViajesService } from 'src/app/services/viajes.service';
 
 @Component({
   selector: 'app-programar-viaje',
@@ -10,30 +15,68 @@ import { text } from 'cheerio/lib/api/manipulation';
 })
 export class ProgramarViajePage implements OnInit {
 
-  viaje = {
-    fecha: undefined as Date, // si
-    hora: undefined as Time, // si
-    destino: '', // si
-    precio: 0, // si
-    capacidad: 0, // si
-    descripcion: '', // Opcional
+  usuario: Usuario = {
+    correo: '',
+    contrasena: '',
+    rut: '',
+    nombre: '',
+    patente: '',
+    foto: '',
+    viaje: null,
+    numero: null,
+  }
+
+  viaje: Viaje = {
+    id: null,
+    fecha: null,
+    hora: null,
+    destino: '',
+    precio: null,
+    capacidad: null,
+    descripcion: null,
+    conductor: this.usuario,
+    pasajeros: [],
+    valoraciones: [],
+    estatus: null,
   }
 
   viajes = new Map();
 
-  constructor(private modalCtrl: ModalController, private toastController: ToastController, private alertController: AlertController) { }
+  constructor(private _modalCtrl: ModalController, private _toastCtrl: ToastController,
+    private _alertCtrl: AlertController, private _auth: AuthService,
+    private _viajes: ViajesService, private _router: Router) { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+      this.loadData();
+    }
+  
+    async loadData() {
+      this.usuario = await this._auth.getSession();
+    }
 
-  chooseOption(option: string) {
-    console.log(option);
+  async onSubmit(type) {
+    if (type === 'un_viaje') {
+      let wasScheduled = await this._viajes.scheduleViaje(this.viaje);
+      if (wasScheduled) {
+        this._modalCtrl.dismiss('un_viaje', 'confirmar');
+        let buttons = [{
+          text: 'Lista de Viajes',
+          role: 'lista_de_viajes',
+          handler: () => { this._router.navigate(['/tus-viajes']); }
+        }]
+        this.sendToast('¡Viaje programado! Puedes verlo en tu lista de Viajes', 'today-outline', buttons);
+      } else {
+        this.sendToast('Ha ocurrido un error. Inténtalo de nuevo', 'alert-circle-outline');
+      }
+    } else {
+      this.confirmarViaje(type);
+    }
   }
 
   async confirmarViaje(type: string) {
     if (type === 'un_viaje') {
       if (this.viaje.fecha != undefined && this.viaje.hora != undefined && this.viaje.destino != '' && this.viaje.precio > 0 && this.viaje.capacidad > 0) {
-        this.modalCtrl.dismiss(this.viaje, 'confirmar');
+        this._modalCtrl.dismiss(this.viaje, 'confirmar');
         // <ion-icon name="today-outline"></ion-icon>
         let buttons = [{
           text: 'Lista de Viajes',
@@ -46,7 +89,7 @@ export class ProgramarViajePage implements OnInit {
       }
     } else {
       if (this.viajes.size > 0) {
-        this.modalCtrl.dismiss(this.viajes, 'confirmar');
+        this._modalCtrl.dismiss(this.viajes, 'confirmar');
         let buttons = [{
           text: 'Lista de Viajes',
           role: 'lista_de_viajes',
@@ -60,7 +103,7 @@ export class ProgramarViajePage implements OnInit {
   }
 
   async sendToast(msg: string, icon: string = undefined, buttons = undefined) {
-    const toast = await this.toastController.create({
+    const toast = await this._toastCtrl.create({
       message: msg,
       duration: 3000,
     });
@@ -71,7 +114,7 @@ export class ProgramarViajePage implements OnInit {
 
   async addViajeMenu() {
     let lastId = this.viajes.size + 1;
-    const alert = await this.alertController.create({
+    const alert = await this._alertCtrl.create({
       header: 'Por favor rellena los campos',
       mode: 'ios',
       backdropDismiss: false,
@@ -80,7 +123,7 @@ export class ProgramarViajePage implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           handler: () => {
-            this.alertController.dismiss('un_calendario', 'cancel')
+            this._alertCtrl.dismiss('un_calendario', 'cancel')
           },
         },
         {

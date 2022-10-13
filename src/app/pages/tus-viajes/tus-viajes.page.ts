@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { Usuario } from 'src/app/interfaces/usuarios';
+import { AuthService } from 'src/app/services/auth.service';
+import { ViajesService } from 'src/app/services/viajes.service';
 
 @Component({
   selector: 'app-tus-viajes',
@@ -8,26 +11,29 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 })
 export class TusViajesPage implements OnInit {
 
-  usuario;
+  usuario: Usuario = {
+    correo: '',
+    contrasena: '',
+    rut: '',
+    nombre: '',
+    patente: '',
+    foto: '',
+    viaje: null,
+    numero: null,
+  }
 
-  constructor(private router: Router, private activatedRouter: ActivatedRoute) {
-    this.activatedRouter.queryParams.subscribe(() => {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.usuario = this.router.getCurrentNavigation().extras.state.usuario;
-      }
-    })
+  constructor(private router: Router, private _auth: AuthService,
+    private _viajes: ViajesService) {
   }
 
   ngOnInit() {
+    this.loadData();
   }
 
-  changePage(page) {
-    let navigationExtras: NavigationExtras = {
-      state: {
-        usuario: this.usuario,
-      }
-    }
-    page == '/login' ? this.router.navigate([page]) : this.router.navigate([page], navigationExtras);
+  async loadData() {
+    this.usuario = await this._auth.getSession();
   }
+
+  
 
 }

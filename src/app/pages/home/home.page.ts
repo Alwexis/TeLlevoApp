@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { Usuario } from 'src/app/interfaces/usuarios';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -8,41 +10,41 @@ import { MenuController } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  usuario = {
+  usuario: Usuario = {
     correo: '',
-    rut: '',
     nombre: '',
+    contrasena: '',
+    rut: '',
     patente: '',
     foto: '',
-    viaje: -1,
+    viaje: null,
+    numero: null
+  };
+
+  constructor(private _router: Router, private _menu: MenuController,
+    private _auth: AuthService) {
+      this.loadData();
   }
 
-  constructor(private router: Router,
-    private activatedRouter: ActivatedRoute,
-    private menu: MenuController) {
-    this.activatedRouter.queryParams.subscribe(() => {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.usuario = this.router.getCurrentNavigation().extras.state.usuario;
-      }
-    })
+  ngOnInit() {
+    this.loadData();
   }
 
-  changePage(page) {
-    let navigationExtras: NavigationExtras = {
-      state: {
-        usuario: this.usuario,
-      }
-    }
-    this.menu.close('menu');
-    page == '/login' ? this.router.navigate([page]) : this.router.navigate([page], navigationExtras);
+  async loadData() {
+    this.usuario = await this._auth.getSession();
+  }
+  
+  async changePage(page) {
+    this._menu.close('menu');
+    page == '/login' ? await this._auth.logout() : this._router.navigate([page]);
   }
 
   verMenu() {
-    this.menu.open('menu');
+    this._menu.open('menu');
   }
 
   cerrarMenu() {
-    this.menu.close('menu');
+    this._menu.close('menu');
   }
 
 }
