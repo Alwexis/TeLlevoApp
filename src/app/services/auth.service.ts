@@ -115,7 +115,8 @@ export class AuthService {
         this.userData.users.set(user.correo, user);
         await this._storage.addData('usuarios', this.userData);
         await this._storage.addData('session', user);
-        this._db.insertOne('usuarios', user);
+        //! No se puede conectar a MongoDB aquí.
+        //this._db.insertOne('usuarios', user);
         this._router.navigate(['/home']);
       });
       return true;

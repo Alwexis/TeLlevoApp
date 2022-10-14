@@ -31,6 +31,7 @@ export class HomePage {
     private _auth: AuthService, private _viajes: ViajesService) { }
 
   ngOnInit() {
+    this.cerrarMenu();
     this.loadData();
   }
 
@@ -67,19 +68,8 @@ export class HomePage {
   }
 
   async changePage(page) {
-    this._menu.close('menu');
+    this.cerrarMenu();
     page == '/login' ? await this._auth.logout() : this._router.navigate([page]);
-  }
-
-  test() {
-    /*
-    this._db.get('Usuarios', ['numero=940529144']).subscribe(response => {
-      console.log(response);
-    })
-    */
-    //this._db.updateOne('Usuarios', ['correo=owo'], { correo: 'fa.olate@duocuc.cl' }).subscribe(e => {
-    //  console.log(e);
-    //})
   }
 
   verMenu() {

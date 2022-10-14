@@ -60,6 +60,7 @@ export class ProgramarViajePage implements OnInit {
         handler: () => { this._router.navigate(['/tus-viajes']); }
       }]
       this.sendToast('¡Viaje programado! Puedes verlo en tu lista de Viajes', 'today-outline', buttons);
+      this._router.navigate(['/home']);
     } else {
       this.sendToast('Ha ocurrido un error. Inténtalo de nuevo', 'alert-circle-outline');
     }

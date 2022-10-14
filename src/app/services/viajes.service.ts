@@ -3,6 +3,7 @@ import { Usuario } from '../interfaces/usuarios';
 import { Viaje, Viajes } from '../interfaces/viajes';
 import { StorageService } from './storage.service';
 import { ViajeStatus } from '../enums/viaje-status';
+import { AgendarStatus } from '../enums/agendar-status';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class ViajesService {
 
   viajesData: Viajes;
 
-  constructor(private _storage: StorageService) {}
+  constructor(private _storage: StorageService) { }
 
   async init() {
     this.viajesData = await this._storage.getData('viajes');
@@ -72,6 +73,19 @@ export class ViajesService {
     } else {
       return false;
     }
+  }
+
+  async getRide(viaje, user: Usuario) {
+    if (this.viajesData.viajes.get(viaje.toString()).capacidad - this.viajesData.viajes.get(viaje.toString()).pasajeros.length > 0) {
+      if (this.viajesData.viajes.get(viaje.toString()).pasajeros.filter(pasajero => pasajero.correo === user.correo).length === 0) {
+        this.viajesData.viajes.get(viaje.toString()).pasajeros.push(user);
+        await this._storage.addData('viajes', this.viajesData);
+        return AgendarStatus.DONE;
+      } else {
+        return AgendarStatus.ALREADY_TAKEN;
+      }
+    }
+    return AgendarStatus.NOT_ENOUGH_SPACE;
   }
 
   translateDate(date: Date) {
