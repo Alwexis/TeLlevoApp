@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { last } from 'cheerio/lib/api/traversing';
 import { Usuario } from 'src/app/interfaces/usuarios';
 import { AuthService } from 'src/app/services/auth.service';
 import { DbService } from 'src/app/services/db.service';
+import { ViajesService } from 'src/app/services/viajes.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage {
   usuario: Usuario = {
     correo: '',
@@ -22,10 +25,10 @@ export class HomePage {
     numero: null
   };
 
+  lastViajes = [];
+
   constructor(private _router: Router, private _menu: MenuController,
-    private _auth: AuthService, private _db: DbService) {
-      this.loadData();
-  }
+    private _auth: AuthService, private _viajes: ViajesService) { }
 
   ngOnInit() {
     this.loadData();
@@ -33,17 +36,47 @@ export class HomePage {
 
   async loadData() {
     this.usuario = await this._auth.getSession();
+    let viajes = this._viajes.get();
+    let viajesArray = Array.from(viajes.viajes.values()).filter(x => x.conductor.correo != this.usuario.correo);
+    let stop = false; let i = 1;
+    while (!stop) {
+      let last: number;
+      if (viajesArray.length > i - 1 && viajesArray.length < 3 && last != i) {
+        let viaje = viajesArray[viajesArray.length - i];
+        viaje['translatedDate'] = this._viajes.translateDate(new Date(viaje.fecha.toString()));
+        this.lastViajes.push(viaje);
+        last = i;
+      } else {
+        stop = true;
+      }
+      i++;
+    }
+    //! Obsoleto, cambiado por la 'función' de arriba
+    /*
+    if (viajesArray.length > 0) {
+      let viajeRaw = viajesArray[viajesArray.length - 1];
+      viajeRaw['translatedDate'] = this._viajes.translateDate(new Date(viajeRaw.fecha.toString()));
+      this.lastViajes.push(viajeRaw);
+      if (viajesArray.length > 1) {
+        let viajeRaw2 = viajesArray[viajesArray.length - 2];
+        viajeRaw2['translatedDate'] = this._viajes.translateDate(new Date(viajeRaw2.fecha.toString()));
+        this.lastViajes.push(viajeRaw2);
+      }
+    }
+    */
   }
-  
+
   async changePage(page) {
     this._menu.close('menu');
     page == '/login' ? await this._auth.logout() : this._router.navigate([page]);
   }
 
   test() {
+    /*
     this._db.get('Usuarios', ['numero=940529144']).subscribe(response => {
       console.log(response);
     })
+    */
     //this._db.updateOne('Usuarios', ['correo=owo'], { correo: 'fa.olate@duocuc.cl' }).subscribe(e => {
     //  console.log(e);
     //})

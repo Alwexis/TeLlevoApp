@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { Usuario } from 'src/app/interfaces/usuarios';
-import { Viajes } from 'src/app/interfaces/viajes';
+import { Viaje, Viajes } from 'src/app/interfaces/viajes';
 import { AuthService } from 'src/app/services/auth.service';
 import { ViajesService } from 'src/app/services/viajes.service';
 
@@ -23,9 +23,9 @@ export class ViajesPage implements OnInit {
     numero: null,
   }
 
-  viajes: Viajes;
+  viajes = [];
 
-  constructor(private router: Router, private _auth: AuthService,
+  constructor(private _router: Router, private _auth: AuthService,
     private _viajes: ViajesService) { }
 
   ngOnInit() {
@@ -34,7 +34,13 @@ export class ViajesPage implements OnInit {
 
   async loadData() {
     this.usuario = await this._auth.getSession();
-    this.viajes = this._viajes.get();
+    this._viajes.get().viajes.forEach(viaje => {
+      if (viaje.conductor.correo != this.usuario.correo) {
+        let viajeRaw = viaje;
+        viajeRaw['translatedDate'] = this._viajes.translateDate(new Date(viajeRaw.fecha.toString()));
+        this.viajes.push(viajeRaw);
+      }
+    })
   }
 
 }

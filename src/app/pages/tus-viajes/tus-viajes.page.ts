@@ -22,7 +22,9 @@ export class TusViajesPage implements OnInit {
     numero: null,
   }
 
-  constructor(private router: Router, private _auth: AuthService,
+  viajes = [];
+
+  constructor(private _router: Router, private _auth: AuthService,
     private _viajes: ViajesService) {
   }
 
@@ -32,8 +34,15 @@ export class TusViajesPage implements OnInit {
 
   async loadData() {
     this.usuario = await this._auth.getSession();
+    this._viajes.get().viajes.forEach(viaje => {
+      if (viaje.conductor.correo === this.usuario.correo) {
+        let viajeRaw = viaje;
+        viajeRaw['translatedDate'] = this._viajes.translateDate(new Date(viajeRaw.fecha.toString()));
+        this.viajes.push(viajeRaw);
+      }
+    })
   }
 
-  
+
 
 }

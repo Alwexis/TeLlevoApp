@@ -8,7 +8,6 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { Session } from '../interfaces/session';
 import { HttpClient } from '@angular/common/http';
 import { DbService } from './db.service';
-import { deprecate } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +30,14 @@ export class AuthService {
       this.userData = await this._storage.addData('usuarios', { users: new Map<string, {}>() });
     }
     return this.userData;
+  }
+
+  getUser(email: string) {
+    return this.userData.users.get(email);
+  }
+
+  getUsers() {
+    return this.userData.users;
   }
 
   async getSession() {
@@ -137,6 +144,11 @@ export class AuthService {
     return this._http.post(url, { type: 'verify', to: email, code: code }).subscribe(d => {
       console.log('Data: ' + d)
     });
+  }
+
+  async recoverPassword(email: string, code: string, username: string) {
+    let url = 'http://localhost:3000/send-mail';
+    return this._http.post(url, { type: 'recover', to: email, code: code, name: username });
   }
 
   async verifyPhone(phone: number, code: string) {

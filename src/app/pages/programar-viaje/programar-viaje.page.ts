@@ -1,8 +1,6 @@
-import { Time } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, IonDatetime, ModalController, ToastController } from '@ionic/angular';
-import { text } from 'cheerio/lib/api/manipulation';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Usuario } from 'src/app/interfaces/usuarios';
 import { Viaje } from 'src/app/interfaces/viajes';
 import { AuthService } from 'src/app/services/auth.service';
@@ -41,9 +39,8 @@ export class ProgramarViajePage implements OnInit {
 
   hoy = new Date().toISOString();
 
-  constructor(private _modalCtrl: ModalController, private _toastCtrl: ToastController,
-    private _auth: AuthService, private _viajes: ViajesService,
-    private _router: Router) { }
+  constructor(private _toastCtrl: ToastController, private _auth: AuthService,
+    private _viajes: ViajesService, private _router: Router) { }
 
   ngOnInit() {
     this.loadData();
@@ -57,7 +54,6 @@ export class ProgramarViajePage implements OnInit {
     this.viaje.conductor = this.usuario;
     let wasScheduled = await this._viajes.scheduleViaje(this.viaje);
     if (wasScheduled) {
-      this._modalCtrl.dismiss('un_viaje', 'confirmar');
       let buttons = [{
         text: 'Lista de Viajes',
         role: 'lista_de_viajes',

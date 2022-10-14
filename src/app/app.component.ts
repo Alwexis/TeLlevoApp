@@ -10,9 +10,7 @@ import { ViajesService } from './services/viajes.service';
 })
 export class AppComponent {
   constructor(private _storage: StorageService, private _auth: AuthService,
-    private _viajes: ViajesService) {
-      
-    }
+    private _viajes: ViajesService) { }
 
   ngOnInit() {
     // If using a custom driver:
@@ -23,8 +21,8 @@ export class AppComponent {
 
   async loadData() {
     await this._storage.init();
-    await this._auth.loadData();
-    await this._viajes.init();
+    this._viajes.init();
+    this._auth.loadData();
   }
   
 }
