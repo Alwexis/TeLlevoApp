@@ -1,5 +1,3 @@
-import { Viaje } from "./viajes";
-
 export interface Usuarios {
     users: Map<string, {}>;
 }
@@ -11,6 +9,7 @@ export interface Usuario {
     nombre: string;
     patente: string;
     foto: string;
-    viaje: Viaje | null;
+    viaje: number | null; // ID del viaje actual
     numero: number | null;
+    tutoriales: {};
 }

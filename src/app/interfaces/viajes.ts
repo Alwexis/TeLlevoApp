@@ -1,6 +1,4 @@
-import { Time } from "@angular/common";
 import { ViajeStatus } from "../enums/viaje-status";
-import { Usuario } from "./usuarios";
 import { Valoracion } from "./valoracion";
 
 export interface Viajes {
@@ -15,8 +13,8 @@ export interface Viaje {
     precio: number;
     capacidad: number;
     descripcion: string | null;
-    conductor: Usuario;
-    pasajeros: Usuario[];
+    conductor: string;
+    pasajeros: string[];
     valoraciones: Valoracion[];
     estatus: ViajeStatus;
 }

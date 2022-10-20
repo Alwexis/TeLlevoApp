@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AlertController, ModalController } from '@ionic/angular';
+import { Usuario } from 'src/app/interfaces/usuarios';
+import { AuthService } from 'src/app/services/auth.service';
+import { ReportesService } from 'src/app/services/reportes.service';
+import { ValoracionService } from 'src/app/services/valoracion.service';
 
 @Component({
   selector: 'app-perfil-otros',
@@ -8,31 +13,58 @@ import { AlertController, ModalController } from '@ionic/angular';
   styleUrls: ['./perfil-otros.page.scss'],
 })
 export class PerfilOtrosPage implements OnInit {
+  //? Usuario sesión
+  usuario: Usuario = {
+    correo: '',
+    contrasena: '',
+    rut: '',
+    nombre: '',
+    patente: '',
+    foto: '',
+    viaje: null,
+    numero: null,
+    tutoriales: {},
+  }
+  //? Usuario a mostrar
+  usuarioAMostrar: Usuario = {
+    correo: '',
+    contrasena: '',
+    rut: '',
+    nombre: '',
+    patente: '',
+    foto: '',
+    viaje: null,
+    numero: null,
+    tutoriales: {},
+  }
+
+  valoracion = [];
 
   // Esto es sólo para rellenar, luego hay que cambiarlo.
-  calificacion = 3.5;
   reporte = {
     motivo: '',
     descripcion: ''
   }
 
-  constructor(private _modalCtrl: ModalController, private _alertCtrl: AlertController) { }
+  constructor(private _modalCtrl: ModalController, private _alertCtrl: AlertController,
+    private _route: ActivatedRoute, private _auth: AuthService,
+    private _valoracion: ValoracionService, private _reportes: ReportesService) { }
 
   ngOnInit() {
-    this.loadQualification();
+    this.loadData();
   }
 
-  loadQualification() {
-    let qualification = document.getElementsByClassName('calificacion')[0];
-    let halfStar = this.calificacion % 1;
-    for (let x = 0; x < this.calificacion - halfStar; x++) {
-      qualification.innerHTML += `<ion-icon name="star"></ion-icon>`;
-    }
-    if (halfStar > 0) qualification.innerHTML += `<ion-icon name="star-half"></ion-icon>`;
-    for (let x = 0; x < (5 - this.calificacion) - halfStar; x++) {
-      qualification.innerHTML += `<ion-icon name="star-outline"></ion-icon>`;
-    }
-    qualification.innerHTML += `<span style="color: black; border-bottom: 1px solid black; margin-left: 1vh;">${this.calificacion}</span>`
+  async loadData() {
+    //? Cargar usuario
+    this.usuario = await this._auth.getSession();
+    //? Cargar usuario a mostrar
+    this._route.queryParams.subscribe(params => {
+      if (params) this.usuarioAMostrar = this._auth.getUser(params.correo) as Usuario;
+    });
+    //? Cargar valoración
+    this.valoracion = this._valoracion.getValoracion(this.usuarioAMostrar);
+    //this.valoracion = this._valoracion.getValoracion(this.usuario);
+    //console.log(this.valoracion.constructor)
   }
 
   async closeModal() {
@@ -40,10 +72,11 @@ export class PerfilOtrosPage implements OnInit {
   }
 
   async onSubmit(form: NgForm) {
+    await this._reportes.reportUser(this.usuario, this.usuarioAMostrar, { motivo: this.reporte.motivo, descripcion: this.reporte.descripcion });
     const alert = await this._alertCtrl.create({
       header: '¡Éxito!',
       subHeader: 'Reportaste con éxito',
-      message: 'Has reportado con éxito al usuario Jenniffer Coñuel. Presiona "OK" para volver a su Perfil.',
+      message: 'Has reportado con éxito al usuario ' + this.usuarioAMostrar.nombre + '. Presiona "OK" para volver a su Perfil.',
       backdropDismiss: false,
       buttons: [{
         text: 'OK',
@@ -55,7 +88,6 @@ export class PerfilOtrosPage implements OnInit {
       }],
       mode: 'ios',
     });
-
     await alert.present();
   }
 

@@ -1,5 +1,5 @@
 export enum ViajeStatus {
-    CANCELED,
-    PENDING,
-    COMPLETED
+    CANCELED = 'Cancelado',
+    PENDING = 'Pendiente',
+    COMPLETED = 'Completado'
 }

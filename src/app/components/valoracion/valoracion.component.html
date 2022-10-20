@@ -1,0 +1,13 @@
+<ion-item>
+  <ion-label>
+    <span *ngIf="total > 0; else noValoraciones" style="display: flex; flex-direction: row;">
+      <span class="calificacion"></span> <p style="margin-right: 1vh;">{{valoracion}}</p>
+    </span>
+    <span *ngIf="total > 0;">
+      <p style="margin-top: 1vh;">{{total}} valoraciones</p>
+    </span>
+    <ng-template #noValoraciones>
+      <p style="color: var(--ion-color-danger)">Este usuario no tiene valoraciones aún</p>
+    </ng-template>
+  </ion-label>
+</ion-item>

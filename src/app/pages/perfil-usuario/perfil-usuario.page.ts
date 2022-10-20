@@ -22,6 +22,7 @@ export class PerfilUsuarioPage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
+    tutoriales: {},
   }
 
   changes = {
@@ -35,7 +36,7 @@ export class PerfilUsuarioPage implements OnInit {
 
   constructor(private _modalCtrl: ModalController, private _router: Router,
     private _alertCtrl: AlertController, private _toastCtrl: ToastController,
-    private _auth: AuthService, private _encrypter: EncrypterService) {
+    private _auth: AuthService) {
   }
 
   ngOnInit() {

@@ -45,6 +45,14 @@ const routes: Routes = [
     path: 'tus-viajes',
     loadChildren: () => import('./pages/tus-viajes/tus-viajes.module').then( m => m.TusViajesPageModule)
   },
+  {
+    path: 'viaje',
+    loadChildren: () => import('./pages/viaje/viaje.module').then( m => m.ViajePageModule)
+  },
+  {
+    path: 'historial-viajes',
+    loadChildren: () => import('./pages/historial-viajes/historial-viajes.module').then( m => m.HistorialViajesPageModule)
+  },
 ];
 
 @NgModule({

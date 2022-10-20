@@ -53,6 +53,7 @@ export class AuthService {
       foto: this.session['foto'],
       viaje: this.session['viaje'],
       numero: this.session['numero'],
+      tutoriales: this.session['tutoriales'],
     }
     return user;
   }
@@ -66,6 +67,7 @@ export class AuthService {
       icon: 'exit-outline'
     });
     await toast.present();
+    location.reload();
   }
 
   async login(credentials: {}) {
@@ -108,6 +110,12 @@ export class AuthService {
       foto: '',
       viaje: null,
       numero: null,
+      tutoriales: {
+        agendarViaje: false,
+        programarViaje: false,
+        editarViaje: false,
+        perfilOtros: false,
+      },
     }
     if (!this.userData.users.has(user.correo)) {
       this._encrypt.encrypt(credentials['contrasena']).subscribe(async (data) => {
@@ -115,7 +123,8 @@ export class AuthService {
         this.userData.users.set(user.correo, user);
         await this._storage.addData('usuarios', this.userData);
         await this._storage.addData('session', user);
-        this._db.insertOne('usuarios', user);
+        //! No se puede conectar a MongoDB aquí.
+        //this._db.insertOne('usuarios', user);
         this._router.navigate(['/home']);
       });
       return true;
@@ -137,6 +146,10 @@ export class AuthService {
       await this._storage.addData('usuarios', this.userData);
       await this._storage.addData('session', user);
     });
+  }
+
+  userDoesExists(email: string) {
+    return this.userData.users.has(email);
   }
 
   async verifyMail(email: string, code: string) {

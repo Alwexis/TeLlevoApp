@@ -20,7 +20,8 @@
           <ion-icon name="list-outline" style="width: 4vh; height: 4vh;"></ion-icon>
           <ion-label>Todos los Viajes</ion-label>
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center; margin: 0vh 4vh;" (click)="_router.navigate(['tus-viajes'])">
+        <div style="display: flex; flex-direction: column; align-items: center; margin: 0vh 4vh;"
+          (click)="_router.navigate(['tus-viajes'])">
           <ion-icon name="car-outline" style="width: 4vh; height: 4vh;"></ion-icon>
           <ion-label>Tus Viajes</ion-label>
         </div>
@@ -28,8 +29,79 @@
     </section>
     <section class="resumen-lista-viajes" *ngIf="viajes.length > 0; else notEnoughtViajes">
       <!--? ngFor -->
+      <div style="border: 1px solid; border-radius: 1vh; margin: 0.75vh 0vh;" *ngFor="let viaje of viajes; index as x">
+        <ion-item detail="true" (click)="showViajeDetails(x, $event)" class="viaje-{{x}}">
+          <ion-label>
+            <p style="margin-bottom: 0.5vh;">
+              {{viaje.translatedDate}}
+            </p>
+            <span style="margin: 0.25vh 0vh;">{{viaje.destino}}</span>
+            <p style="margin-top: 0.5vh;">
+              {{viaje.capacidad - viaje.pasajeros.length}} Disponible(s) | ${{viaje.precio}} de Tarifa
+            </p>
+          </ion-label>
+        </ion-item>
+        <ion-list class="viaje-{{x}}-details" *ngIf="viajes[x].details == true">
+          <!--? Conductor -->
+          <ion-list-header>
+            <ion-label>Conductor</ion-label>
+          </ion-list-header>
+          <ion-item (click)="goToProfile(viaje.conductorObject)">
+            <ion-avatar slot="start">
+              <img *ngIf="viaje.conductorObject.foto != ''; else conductorDoesntHaveFoto"
+                src="{{viaje.conductorObject.foto}}" />
+              <ng-template #conductorDoesntHaveFoto>
+                <img src="./../../../assets/hellokitty.png" />
+              </ng-template>
+            </ion-avatar>
+            <ion-label>{{viaje.conductorObject.nombre}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <span style="display: flex; align-content: center; justify-content: space-around; align-items: center; flex-direction: row; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
+                <p (click)="agendar(viaje.id, $event)" style="color: var(--ion-color-success)" *ngIf="isAvalaible(x); else notEnoughSpace">
+                  Reservar
+                <p>
+                <ng-template #notEnoughSpace>
+                  <p style="color: var(--ion-color-danger)">Reservar<p>
+                </ng-template>
+                <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary)">Detalles del Viaje</p>
+              </span>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <!--
+        <ion-item class="viaje-{{x}}-details" *ngIf="viajes[x].details == true">
+          <ion-label style="display: flex; flex-direction: column;">
+            <span>Conductor: {{viaje.conductor.nombre}}</span>
+            <span style="margin-top: 0.25vh; border-bottom: 1px solid; max-width: 10vh;">Pasajeros:</span>
+            <p style="margin-top: 1vh; display: flex; flex-direction: column;"
+              *ngIf="viaje.pasajeros.length > 0; else noPassengers">
+              <span *ngFor="let pasajero of viaje.pasajerosObject">
+                - {{pasajero.nombre}}
+              </span>
+            </p>
+            <ng-template #noPassengers>
+              <p style="color: var(--ion-color-danger); margin-top: 0.25vh;">
+                No hay pasajeros aún
+              </p>
+            </ng-template>
+            <span style="display: flex; align-content: center; justify-content: space-around; align-items: center; flex-direction: row; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
+              <p (click)="agendar(viaje.id, $event)" style="color: var(--ion-color-success)" *ngIf="isAvalaible(x); else notEnoughSpace">
+                Reservar
+              <p>
+              <ng-template #notEnoughSpace>
+                <p style="color: var(--ion-color-danger)">Reservar<p>
+              </ng-template>
+              <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary)">Detalles del Viaje</p>
+            </span>
+          </ion-label>
+        </ion-item>
+        -->
+      </div>
+      <!--
       <ion-item-sliding style="border: 1px solid; border-radius: 1vh; margin: 0.75vh 0vh;" *ngFor="let viaje of viajes; index as x">
-        <ion-item>
+        <ion-item detail="true" (click)="showViajeDetails(x, $event)" class="viaje-{{x}}">
           <ion-label>
             <p style="margin-bottom: 0.5vh;">
               {{viaje.translatedDate}}
@@ -41,18 +113,46 @@
           </ion-label>
         </ion-item>
         <ion-item-options>
-          <ion-item-option color="success" style="color: black;">
+          <ion-item-option color="success" style="color: black;" (click)="agendar(viaje.id)">
             <ion-icon slot="top" size="large" name="push-outline"></ion-icon>
             Agendar
           </ion-item-option>
         </ion-item-options>
+        <ion-item *ngIf="viajes[x].details == true">
+          <ion-label style="display: flex; flex-direction: column;">
+            <span>Conductor: {{viaje.conductor.nombre}}</span>
+            <span style="margin-top: 0.25vh; border-bottom: 1px solid; max-width: 10vh;">Pasajeros:</span>
+            <p style="margin-top: 1vh; display: flex; flex-direction: column;" *ngIf="viaje.pasajeros.length > 0; else noPassengers">
+              <span *ngFor="let pasajero of viaje.pasajeros">
+                - {{pasajero.nombre}}
+              </span>
+            </p>
+            <ng-template #noPassengers>
+              <p style="color: red; margin-top: 0.25vh;">
+                No hay pasajeros aún
+              </p>
+            </ng-template>
+            <span (click)="agendar(viaje.id)" *ngIf="isAvalaible(x); else notEnoughSpace" style="margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid; text-align: center;">
+              <p style="color: #2dd36f">Reservar<p>
+            </span>
+            <ng-template #notEnoughSpace>
+              <span (click)="agendar(viaje.id)" style="margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid; text-align: center;">
+                <p style="color: #eb445a">Reservar<p>
+              </span>
+            </ng-template>
+          </ion-label>
+        </ion-item>
       </ion-item-sliding>
+      -->
       <!--? Fin ngFor -->
     </section>
     <ng-template #notEnoughtViajes>
-      <div style="margin: 2.5vh 0vh; display: flex; flex-direction: column; align-content: center; justify-content: center; align-items: center;">
+      <div
+        style="margin: 2.5vh 0vh; display: flex; flex-direction: column; align-content: center; justify-content: center; align-items: center;">
         <span style="color: red; text-align: center;">No hay viajes programados :(</span>
-        <a style="text-align: center; margin: 1vh 0vh;"><ion-icon name="refresh-outline"></ion-icon> Recargar</a>
+        <a style="text-align: center; margin: 1vh 0vh;">
+          <ion-icon name="refresh-outline"></ion-icon> Recargar
+        </a>
       </div>
     </ng-template>
   </div>

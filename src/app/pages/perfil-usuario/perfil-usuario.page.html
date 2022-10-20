@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button routerLink="/home"></ion-back-button>
+      <ion-back-button (click)="_router.navigate(['home'])"></ion-back-button>
     </ion-buttons>
     <ion-title>Perfil</ion-title>
     <ion-icon slot="end" (click)="_auth.logout()" class="ion-padding" size="large" name="log-out-outline"></ion-icon>

@@ -1,0 +1,196 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button mode="ios" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles del Viaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="content-body">
+    <ion-list>
+      <!--* Destino -->
+      <ion-item>
+        <ion-label>
+          <span style="font-size: 2.5vh; border-bottom: 1px solid; padding: 0.25vh 0vh;">
+            Destino
+          </span>
+          <p style="font-size: 2vh; margin-top: 1.25vh;">{{viaje.destino}}</p>
+        </ion-label>
+      </ion-item>
+      <!--* Conductor -->
+      <ion-item (click)="goToProfile(conductor.correo)">
+        <ion-label>
+          <span style="font-size: 2.5vh; border-bottom: 1px solid; padding: 0.25vh 0vh;">
+            Conductor
+          </span>
+          <ion-item style="font-size: 2vh; margin-top: 1.25vh;">
+            <label *ngIf="conductor.foto != ''; else doesntHaveFoto">
+              <a
+                style="display: flex; flex-direction: row; align-content: center; justify-content: center; align-items: center;">
+                <img src="{{conductor.foto}}" style="width: 4vh; height: 4vh; border: 1px solid; margin-right: 1vh;"> {{conductor.nombre}}
+              </a>
+            </label>
+            <ng-template #doesntHaveFoto>
+              <label>
+                <a
+                  style="display: flex; flex-direction: row; align-content: center; justify-content: center; align-items: center;">
+                  <img src="./../../../assets/hellokitty.png"
+                    style="width: 4vh; height: 4vh; border: 1px solid; margin-right: 1vh;"> {{conductor.nombre}}
+                </a>
+              </label>
+            </ng-template>
+          </ion-item>
+        </ion-label>
+      </ion-item>
+      <!--* Capacidad & Precio -->
+      <ion-item>
+        <ion-label>
+          <span style="font-size: 2.5vh; border-bottom: 1px solid; padding: 0.25vh 0vh;">
+            Capacidad y Precio
+          </span>
+          <p style="font-size: 2vh; margin-top: 1.25vh;">
+            {{viaje.capacidad}} personas | ${{viaje.precio}}/persona
+          </p>
+          <p style="font-size: 1.8vh; color: green;">
+            ({{viaje.capacidad - viaje.pasajeros.length}} disponibles)
+          </p>
+        </ion-label>
+      </ion-item>
+      <!--* Fecha -->
+      <ion-item>
+        <ion-label>
+          <span style="font-size: 2.5vh; border-bottom: 1px solid; padding: 0.25vh 0vh;">
+            Fecha
+          </span>
+          <p style="font-size: 2vh; margin-top: 1.25vh;">{{viaje.translatedDate}}</p>
+        </ion-label>
+      </ion-item>
+      <!--* Estado del Viaje -->
+      <ion-item>
+        <ion-label>
+          <span style="font-size: 2.5vh; border-bottom: 1px solid; padding: 0.25vh 0vh;">
+            Estado del Viaje
+          </span>
+          <p *ngIf="viaje.estatus == 'Completado'" style="color: var(--ion-color-success); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
+            <ion-icon name="checkmark-circle-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
+          </p>
+          <p *ngIf="viaje.estatus == 'Pendiente'" style="color: var(--ion-color-warning); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
+            <ion-icon name="time-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
+          </p>
+          <p *ngIf="viaje.estatus == 'Cancelado'" style="color: var(--ion-color-danger); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
+            <ion-icon name="close-circle-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
+          </p>
+        </ion-label>
+      </ion-item>
+      <!--* Pasajeros -->
+      <ion-item (click)="displayPasajeros()">
+        <ion-label>
+          <span style="font-size: 2.5vh;">Pasajeros</span>
+        </ion-label>
+        <ion-icon class="pasajeros-details" name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+      <ion-list *ngIf="hasDisplayedPasajeros">
+        <ion-list *ngIf="pasajeros.length > 0; else noPassengers">
+          <ion-item (click)="goToProfile(pasajero.correo)" *ngFor="let pasajero of pasajeros">
+            <ion-avatar slot="start">
+              <img *ngIf="pasajero.foto != ''; else noPfp" src="{{pasajero.foto}}">
+              <ng-template #noPfp>
+                <img src="./../../../assets/hellokitty.png">
+              </ng-template>
+            </ion-avatar>
+            <ion-label>
+              {{pasajero.nombre}}
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ng-template #noPassengers>
+          <ion-item lines="none">
+            <ion-note color="danger">No hay pasajeros en este viaje</ion-note>
+          </ion-item>
+        </ng-template>
+      </ion-list>
+      <!--? Opciones de Conductor -->
+      <ion-item *ngIf="conductor.correo === usuario.correo">
+        <ion-button id="editar-viaje-mdl" style="color: var(--ion-color-warning); margin: 0vh 1vh;" fill="clear"
+          shape="round" [disabled]="viaje.estatus !== 'Pendiente'">
+          <ion-icon name="pencil-outline" style="margin-right: 1vh;"></ion-icon> Editar Viaje
+        </ion-button>
+        <ion-button (click)="cancelarViaje()" style="color: var(--ion-color-danger); margin: 0vh 1vh;" fill="clear"
+          shape="round" [disabled]="viaje.estatus !== 'Pendiente'">
+          <ion-icon name="ban-outline" style="margin-right: 1vh;"></ion-icon> Cancelar Viaje
+        </ion-button>
+      </ion-item>
+      <!--? Opciones de Usuario que tiene el Viaje -->
+      <ion-item *ngIf="gotTheRide">
+        <ion-button [disabled]="viaje.estatus != 'Pendiente'" (click)="cancelarReserva()"
+        style="color: var(--ion-color-danger); margin-top: 2vh; font-size: 2vh;" fill="clear" shape="round">
+          <ion-icon name="ban-outline" style="margin-right: 1vh;"></ion-icon> Cancelar Reserva
+        </ion-button>
+      </ion-item>
+      <!--? Opciones de Usuario que no es el conductor y no tiene el viaje -->
+      <ion-item *ngIf="!gotTheRide && conductor.correo !== usuario.correo">
+        <ion-button [disabled]="viaje.estatus != 'Pendiente'" (click)="reservar()"
+        style="color: var(--ion-color-primary); margin-top: 2vh; font-size: 2vh;" fill="clear" shape="round">
+          <ion-icon name="checkmark-outline" style="margin-right: 1vh;"></ion-icon> Reservar Viaje
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+  <!--? Modal Editar -->
+  <ion-modal #editarviaje trigger="editar-viaje-mdl" name="editar-viaje" id="editar-viaje">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button style="color: red;" (click)="closeModal()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Editar Viaje</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #unviaje="ngForm" (ngSubmit)="onSubmit()">
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa el destino</ion-label>
+            <ion-input type="text" placeholder="Los Copihues, Talcahuano" name="destino" [(ngModel)]="viaje.destino"
+              mode="ios" required></ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa el precio</ion-label>
+            <ion-input type="number" placeholder="2500" name="precio" [(ngModel)]="viaje.precio" mode="ios" required
+              min="1000">
+            </ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa la capacidad</ion-label>
+            <ion-input type="number" placeholder="4" name="capacidad" [(ngModel)]="viaje.capacidad" mode="ios" required
+              max=10 min=1>
+            </ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Selecciona una Fecha y Hora</ion-label>
+            <ion-datetime-button style="margin-top: 1vh;" datetime="datetime">
+              <span slot="time-label">Hora</span>
+            </ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="datetime" name="fecha" #fecha locale="es-CL" hourCycle="h23" min="{{hoy}}">
+                </ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Descripción (opcional)</ion-label>
+            <ion-textarea name="descripcion" [(ngModel)]="viaje.descripcion"
+              placeholder="Auto de marca ... y color ..., estacionado en ..." mode="ios"></ion-textarea>
+          </ion-item>
+          <ion-button [disabled]="unviaje.invalid" type="submit" expand="block" fill="clear" shape="round">
+            Agregar
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <!-- Fin Modal -->
+</ion-content>

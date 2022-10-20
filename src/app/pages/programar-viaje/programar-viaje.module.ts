@@ -8,12 +8,15 @@ import { ProgramarViajePageRoutingModule } from './programar-viaje-routing.modul
 
 import { ProgramarViajePage } from './programar-viaje.page';
 
+import { SwiperModule } from 'swiper/angular';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ProgramarViajePageRoutingModule
+    ProgramarViajePageRoutingModule,
+    SwiperModule
   ],
   declarations: [ProgramarViajePage]
 })

@@ -8,13 +8,15 @@ import { PerfilOtrosPageRoutingModule } from './perfil-otros-routing.module';
 
 import { PerfilOtrosPage } from './perfil-otros.page';
 
+import { ValoracionComponent } from '../../components/valoracion/valoracion.component';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PerfilOtrosPageRoutingModule
+    PerfilOtrosPageRoutingModule,
   ],
-  declarations: [PerfilOtrosPage]
+  declarations: [PerfilOtrosPage, ValoracionComponent]
 })
 export class PerfilOtrosPageModule {}

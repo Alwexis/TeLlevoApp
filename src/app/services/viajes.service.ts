@@ -3,15 +3,20 @@ import { Usuario } from '../interfaces/usuarios';
 import { Viaje, Viajes } from '../interfaces/viajes';
 import { StorageService } from './storage.service';
 import { ViajeStatus } from '../enums/viaje-status';
+import { AgendarStatus } from '../enums/agendar-status';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ViajesService {
 
-  viajesData: Viajes;
+  viajesData: Viajes = {
+    viajes: new Map<string, Viaje>(),
+    lastId: 0
+  };
 
-  constructor(private _storage: StorageService) {}
+  constructor(private _storage: StorageService, private _auth: AuthService) { }
 
   async init() {
     this.viajesData = await this._storage.getData('viajes');
@@ -24,7 +29,7 @@ export class ViajesService {
   getFrom(user: Usuario) {
     let viajes = [];
     this.viajesData.viajes.forEach(viaje => {
-      if (viaje.conductor.correo === user.correo) {
+      if (viaje.conductor === user.correo) {
         viajes.push(viaje);
       }
     })
@@ -38,7 +43,7 @@ export class ViajesService {
   }
 
   getViaje(id) {
-    return this.viajesData.viajes.get(id);
+    return this.viajesData.viajes.get(id.toString());
   }
 
   async scheduleViaje(viaje: {}) {
@@ -64,14 +69,62 @@ export class ViajesService {
     return false;
   }
 
-  async removeViaje(id) {
-    if (this.viajesData.viajes.has(id)) {
-      this.viajesData.viajes.delete(id);
+  async cancelViaje(id, user: Usuario) {
+    if (this.viajesData.viajes.has(id.toString())) {
+      if (this.viajesData.viajes.get(id.toString()).conductor === user.correo) {
+        //if (this.viajesData.viajes.get(id.toString()).pasajeros.length === 0) {
+        if (this.viajesData.viajes.get(id.toString()).fecha.getTime() > new Date().getTime()) {
+          let viajeACancelar = this.viajesData.viajes.get(id.toString());
+          viajeACancelar.estatus = ViajeStatus.CANCELED;
+          viajeACancelar.pasajeros.forEach(async (pasajero) => {
+            let pasajeroObject = this._auth.getUser(pasajero) as Usuario;
+            pasajeroObject.viaje = null;
+            await this._auth.updateUser(user);
+          })
+          await this._storage.addData('viajes', this.viajesData);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  async editViaje(viaje: Viaje, user: Usuario) {
+    if (viaje.conductor === user.correo) {
+      this.viajesData.viajes.set(viaje.id.toString(), viaje);
       await this._storage.addData('viajes', this.viajesData);
       return true;
-    } else {
-      return false;
     }
+    return false;
+  }
+
+  async getRide(viaje, user: Usuario) {
+    if (this.viajesData.viajes.get(viaje.toString()).capacidad - this.viajesData.viajes.get(viaje.toString()).pasajeros.length > 0) {
+      if (this.viajesData.viajes.get(viaje.toString()).pasajeros.filter(pasajero => pasajero === user.correo).length === 0) {
+        this.viajesData.viajes.get(viaje.toString()).pasajeros.push(user.correo);
+        await this._storage.addData('viajes', this.viajesData);
+        user.viaje = viaje;
+        await this._auth.updateUser(user)
+        return AgendarStatus.DONE;
+      } else {
+        return AgendarStatus.ALREADY_TAKEN;
+      }
+    }
+    return AgendarStatus.NOT_ENOUGH_SPACE;
+  }
+
+  async cancelRide(id, user: Usuario) {
+    if (this.viajesData.viajes.has(id.toString())) {
+      let viaje = this.viajesData.viajes.get(id.toString());
+      if (viaje.pasajeros.filter(pasajero => pasajero === user.correo).length > 0) {
+        this.viajesData.viajes.get(id.toString()).pasajeros = viaje.pasajeros.filter(pasajero => pasajero !== user.correo);
+        await this._storage.addData('viajes', this.viajesData);
+        user.viaje = null;
+        await this._auth.updateUser(user)
+        return true;
+      }
+    }
+    return false;
   }
 
   translateDate(date: Date) {

@@ -1,0 +1,55 @@
+<!-- Header -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button mode="ios" text="Volver" default-href="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>TeLlevoApp</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div style="margin-top: 2vh;" class="content-body">
+    <span class="title">Historial de Viajes</span>
+    <div>
+      <p style="text-align: center; max-width: 40vh;">Historial de Viajes reservados</p>
+      <p style="text-align: center; max-width: 40vh;">Los viajes que hayas reservado serán mostrados aquí.</p>
+    </div>
+  </div>
+  <!--? Listo los Viajes del Usuario -->
+  <ion-list *ngIf="viajes.length > 0; else doesntHaveViajes">
+    <ion-item *cdkVirtualFor="let viaje of viajes">
+      <ion-label>
+        <p style="margin-bottom: 0.5vh;">
+          {{viaje.translatedDate}}
+        </p>
+        <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{viaje.destino}}</span>
+        <p style="margin-top: 0.5vh;">
+          {{viaje.pasajeros.length}} Pasajero(s) | ${{viaje.precio}} de Tarifa
+        </p>
+        <!--? Estado del Viaje -->
+        <p *ngIf="viaje.estatus == 'Completado'" style="color: var(--ion-color-success); font-size: 2vh; margin-bottom: 1vh; display: flex;
+                    align-items: center;">
+          <ion-icon name="checkmark-circle-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
+        </p>
+        <p *ngIf="viaje.estatus == 'Pendiente'" style="color: var(--ion-color-warning); font-size: 2vh;
+                    margin-bottom: 1vh; display: flex; align-items: center;">
+          <ion-icon name="time-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
+        </p>
+        <p *ngIf="viaje.estatus == 'Cancelado'" style="color: var(--ion-color-danger); font-size: 2vh;
+                    margin-bottom: 1vh; display: flex; align-items: center;">
+          <ion-icon name="close-circle-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
+        </p>
+        <!--? Fin Estado del Viaje -->
+        <!--? Detalles -->
+        <a (click)="seeViajeDetails(viaje.id)">Ver información completa</a>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ng-template #doesntHaveViajes>
+    <div style="margin-top: 2vh;" class="content-body">
+      <span style="color: var(--ion-color-danger);">No tienes registro de viajes reservados</span>
+      <p>¿Por qué no intentas agendar uno?</p>
+    </div>
+  </ng-template>
+</ion-content>

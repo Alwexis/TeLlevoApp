@@ -10,29 +10,38 @@
 <ion-content class="ion-padding">
   <div class="body-page">
     <!-- Imagen del Usuario -->
-    <img src="https://i.pinimg.com/564x/fd/2e/b1/fd2eb14b99702200b2b1807dffbe4792.jpg">
-    <span class="nombreUsuario">Jenniffer Coñuel</span>
+    <img *ngIf="usuarioAMostrar.foto != ''; else doesntHaveFoto" src="{{usuarioAMostrar.foto}}">
+    <ng-template #doesntHaveFoto>
+      <img src="./../../../assets/hellokitty.png">
+    </ng-template>
+    <span class="nombreUsuario">{{usuarioAMostrar.nombre}}</span>
     <!-- Reputación -->
     <section style="margin-top: 1.5vh; text-align: center;">
       <span style="font-size: 2.5vh; font-weight: 600; border-bottom: 1px solid;">Reputación</span>
-      <div class="calificacion">
-      </div>
+      <reputacion [valoracion]="valoracion[0]" [total]="valoracion[1]"></reputacion>
     </section>
     <!-- Información del Usuario -->
-    <section style="margin-top: 4vh; display: flex; flex-direction: column; align-items: center; justify-self: center;">
+    <section style="margin-top: 2vh; display: flex; flex-direction: column; align-items: center; justify-self: center;">
       <span style="font-size: 2.5vh; font-weight: 600;">Información del Usuario</span>
       <div class="informacion-usuario">
         <div>
-          <span class="info-user-titulo">Nombres:</span> <span>Jenniffer Constanza</span>
+          <span class="info-user-titulo">Nombres:</span> <span>{{usuarioAMostrar.nombre}}</span>
         </div>
         <div>
-          <span class="info-user-titulo">Apellidos:</span> <span>Coñuel Ramos</span>
+          <span class="info-user-titulo">Rut:</span> <span>{{usuarioAMostrar.rut}}</span>
         </div>
         <div>
-          <span class="info-user-titulo">Rut:</span> <span>21.144.450-9</span>
+          <span class="info-user-titulo">Número:</span>
+          <span *ngIf="usuarioAMostrar.numero != null; else doesntHaveNumero">
+            {{usuarioAMostrar.numero}}
+          </span>
+          <ng-template #doesntHaveNumero>
+            <span>No ha asignado un número</span>
+          </ng-template>
         </div>
-        <div>
-          <span class="info-user-titulo">Número:</span> <span>9 4052 9144</span>
+        <span style="font-weight: 600; border-bottom: 1px solid; margin: 1.5vh 0vh 0.5vh 0vh;">Información del Vehículo</span>
+        <div *ngIf="usuarioAMostrar.patente != null">
+          <span class="info-user-titulo">Patente:</span> <span>{{usuarioAMostrar.patente}}</span>
         </div>
         <!-- Agregar información del Conductor / Patente -->
       </div>

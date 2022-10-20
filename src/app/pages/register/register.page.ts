@@ -26,10 +26,6 @@ export class RegisterPage implements OnInit {
     condiciones: false,
     codigo: '',
   }
-
-  usuario: Usuario;
-  userData: Usuarios;
-
   codigo;
 
   @ViewChild('registerform') registerform: NgForm;
@@ -39,11 +35,6 @@ export class RegisterPage implements OnInit {
     private _auth: AuthService) { }
 
   ngOnInit() {
-    this.loadData();
-  }
-
-  async loadData() {
-    this.userData = await this._storage.getData('usuarios');
   }
 
   conductorChange() {
@@ -59,17 +50,24 @@ export class RegisterPage implements OnInit {
     }
   }
 
-  checkPasswords(p1, p2) {
-    if (p1 != p2 && (p1.length > 0 && p2.length > 0)) {
-      this.registerform.form.controls['contrasena2'].setErrors({ 'incorrect': true });
-      return true;
+  checkPasswords() {
+    if (this.credenciales.contrasena != '' && this.credenciales.contrasena2 != '') {
+      if (this.credenciales.contrasena != '' && this.credenciales.contrasena2 != '') {
+        if (this.credenciales.contrasena != this.credenciales.contrasena2) {
+          this.registerform.form.controls['contrasena2'].setErrors({ 'incorrect': true });
+          return false;
+        } else {
+          this.registerform.form.controls['contrasena2'].setErrors(null);
+          return true;
+        }
+      }
     }
-    return false;
+    return true;
   }
 
   async lastStepRegistration() {
     this.credenciales.extension = this.credenciales.rawExtension == 'alumno' ? '@duocuc.cl' : '@profesor.duoc.cl';
-    if (!this.userData.users.has(this.credenciales.correo + this.credenciales.extension)) {
+    if (!this._auth.userDoesExists(this.credenciales.correo + this.credenciales.extension)) {
       this.codigo = Math.random().toString(36).substring(2, 9).toUpperCase();
       console.log('Este es el código. Pero prueba ir a tu correo <3 ' + this.codigo);
       await this._auth.verifyMail(this.credenciales.correo + this.credenciales.extension, this.codigo);
@@ -111,7 +109,7 @@ export class RegisterPage implements OnInit {
               handler: () => {
                 toast.dismiss('ok');
                 this._modalCtrl.dismiss('modal', 'cancelar');
-                this._router.navigate(['perfil-usuario']);
+                this._router.navigate(['perfil']);
               }
             }
           ]
@@ -136,6 +134,18 @@ export class RegisterPage implements OnInit {
         });
         await toast.present();
       }
+    }
+  }
+
+  formatString(type: string) {
+    if (type === 'rut') {
+      if (/(([0-9]{1,2})\.([0-9]{3})\.([0-9]{3})-([0-9]|k)|([0-9]{8}[0-9|k]{1}))/.test(this.credenciales.rut)) {
+        let rut = this.credenciales.rut.substring(0, this.credenciales.rut.length - 1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        let dv = this.credenciales.rut.substring(this.credenciales.rut.length - 1);
+        this.credenciales.rut = rut + '-' + dv;
+      }
+    } else if (type === 'patente') {
+      this.credenciales.patente = this.credenciales.patente.match(/[a-zA-Z0-9]{2}/g).join("-").toUpperCase();
     }
   }
 

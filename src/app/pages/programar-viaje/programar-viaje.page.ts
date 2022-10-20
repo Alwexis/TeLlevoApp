@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController, ToastController } from '@ionic/angular';
+import { IonDatetime, ModalController, ToastController } from '@ionic/angular';
 import { Usuario } from 'src/app/interfaces/usuarios';
 import { Viaje } from 'src/app/interfaces/viajes';
 import { AuthService } from 'src/app/services/auth.service';
 import { ViajesService } from 'src/app/services/viajes.service';
+
+import SwiperCore, { Autoplay, Keyboard, Pagination, Scrollbar, Zoom } from 'swiper';
+import { IonicSlides } from '@ionic/angular';
+
+SwiperCore.use([Pagination])
 
 @Component({
   selector: 'app-programar-viaje',
@@ -22,6 +27,7 @@ export class ProgramarViajePage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
+    tutoriales: {}
   }
 
   viaje: Viaje = {
@@ -31,13 +37,15 @@ export class ProgramarViajePage implements OnInit {
     precio: null,
     capacidad: null,
     descripcion: null,
-    conductor: this.usuario,
+    conductor: this.usuario.correo,
     pasajeros: [],
     valoraciones: [],
     estatus: null,
   }
 
   hoy = new Date().toISOString();
+
+  @ViewChild('fecha') fecha: IonDatetime;
 
   constructor(private _toastCtrl: ToastController, private _auth: AuthService,
     private _viajes: ViajesService, private _router: Router) { }
@@ -51,7 +59,8 @@ export class ProgramarViajePage implements OnInit {
   }
 
   async onSubmit() {
-    this.viaje.conductor = this.usuario;
+    this.viaje.conductor = this.usuario.correo;
+    this.viaje.fecha = new Date(this.fecha.value.toString());
     let wasScheduled = await this._viajes.scheduleViaje(this.viaje);
     if (wasScheduled) {
       let buttons = [{
@@ -60,6 +69,7 @@ export class ProgramarViajePage implements OnInit {
         handler: () => { this._router.navigate(['/tus-viajes']); }
       }]
       this.sendToast('¡Viaje programado! Puedes verlo en tu lista de Viajes', 'today-outline', buttons);
+      this._router.navigate(['/home']);
     } else {
       this.sendToast('Ha ocurrido un error. Inténtalo de nuevo', 'alert-circle-outline');
     }
