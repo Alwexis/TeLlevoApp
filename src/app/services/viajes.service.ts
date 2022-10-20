@@ -127,6 +127,19 @@ export class ViajesService {
     return false;
   }
 
+  async getRide(viaje, user: Usuario) {
+    if (this.viajesData.viajes.get(viaje.toString()).capacidad - this.viajesData.viajes.get(viaje.toString()).pasajeros.length > 0) {
+      if (this.viajesData.viajes.get(viaje.toString()).pasajeros.filter(pasajero => pasajero.correo === user.correo).length === 0) {
+        this.viajesData.viajes.get(viaje.toString()).pasajeros.push(user);
+        await this._storage.addData('viajes', this.viajesData);
+        return AgendarStatus.DONE;
+      } else {
+        return AgendarStatus.ALREADY_TAKEN;
+      }
+    }
+    return AgendarStatus.NOT_ENOUGH_SPACE;
+  }
+
   translateDate(date: Date) {
     let dia = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][date.getDay()];
     let mes = ['En', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][date.getMonth()];
