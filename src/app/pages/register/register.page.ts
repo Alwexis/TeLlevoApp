@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular';
+import { RegisterStatus } from 'src/app/enums/register-status';
 import { Usuario, Usuarios } from 'src/app/interfaces/usuarios';
 import { AuthService } from 'src/app/services/auth.service';
 import { StorageService } from 'src/app/services/storage.service';
@@ -40,13 +41,15 @@ export class RegisterPage implements OnInit {
   conductorChange() {
     //this.credenciales.conductor ? document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: flex;") : document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: none;");
     if (this.credenciales.conductor) {
-      document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: flex;");
-      this.registerform.form.get('patente').setValidators([Validators.required]);
-      this.registerform.form.get('patente').updateValueAndValidity();
+      document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: flex; flex-direction: column;");
+      document.getElementsByClassName('patenteInput')[0].setAttribute("required", "");
+      //this.registerform.form.get('patente').setValidators([Validators.required]);
+      //this.registerform.form.get('patente').updateValueAndValidity();
     } else {
       document.getElementsByClassName('patenteInput')[0].setAttribute("style", "display: none;");
-      this.registerform.form.get('patente').clearValidators();
-      this.registerform.form.get('patente').updateValueAndValidity();
+      document.getElementsByClassName('patenteInput')[0].removeAttribute("required");
+      //this.registerform.form.get('patente').clearValidators();
+      //this.registerform.form.get('patente').updateValueAndValidity();
     }
   }
 
@@ -66,27 +69,31 @@ export class RegisterPage implements OnInit {
   }
 
   async lastStepRegistration() {
+    const toast = await this._toastCtrl.create({
+      icon: 'close-circle-outline',
+      duration: 3000,
+      buttons: [{
+        text: 'Cerrar',
+        role: 'cerrar',
+        icon: 'close-circle-outline',
+        handler: () => {
+          toast.dismiss('ok');
+        }
+      }]
+    });
     this.credenciales.extension = this.credenciales.rawExtension == 'alumno' ? '@duocuc.cl' : '@profesor.duoc.cl';
     if (!this._auth.userDoesExists(this.credenciales.correo + this.credenciales.extension)) {
-      this.codigo = Math.random().toString(36).substring(2, 9).toUpperCase();
-      console.log('Este es el código. Pero prueba ir a tu correo <3 ' + this.codigo);
-      await this._auth.verifyMail(this.credenciales.correo + this.credenciales.extension, this.codigo);
+      if (!this._auth.rutDoesExists(this.credenciales.rut)) {
+        this.codigo = Math.random().toString(36).substring(2, 9).toUpperCase();
+        console.log('Este es el código. Pero prueba ir a tu correo <3 ' + this.codigo);
+        await this._auth.verifyMail(this.credenciales.correo + this.credenciales.extension, this.codigo, this.credenciales.nombre);
+      } else {
+        toast.message = '¡Error! Ya existe un usuario con ese rut';
+        await toast.present();
+        await this._modalCtrl.dismiss('modal', 'cancelar')
+      }
     } else {
-      const toast = await this._toastCtrl.create({
-        message: '¡Error! Ya existe un usuario con ese correo',
-        icon: 'close-circle-outline',
-        duration: 3000,
-        buttons: [
-          {
-            text: 'Cerrar',
-            role: 'cerrar',
-            icon: 'close-circle-outline',
-            handler: () => {
-              toast.dismiss('ok');
-            }
-          }
-        ]
-      });
+      toast.message = '¡Error! Ya existe un usuario con ese correo';
       await toast.present();
       await this._modalCtrl.dismiss('modal', 'cancelar')
     }
@@ -95,7 +102,7 @@ export class RegisterPage implements OnInit {
   async register() {
     if (this.codigo == this.credenciales.codigo) {
       let wasRegistered = await this._auth.registerUser(this.credenciales);
-      if (wasRegistered) {
+      if (wasRegistered === RegisterStatus.SUCCESSFUL) {
         await this._modalCtrl.dismiss('modal')
         const toast = await this._toastCtrl.create({
           message: '¡Bienvenido a bordo!',
@@ -118,7 +125,6 @@ export class RegisterPage implements OnInit {
       } else {
         await this._modalCtrl.dismiss('modal', 'cancelar');
         const toast = await this._toastCtrl.create({
-          message: '¡Error! Ya existe un usuario con ese correo',
           icon: 'close-circle-outline',
           duration: 3000,
           buttons: [
@@ -132,6 +138,13 @@ export class RegisterPage implements OnInit {
             }
           ]
         });
+        if (wasRegistered === RegisterStatus.ALREADY_REGISTERED) {
+          toast.message = '¡Error! Ya existe un usuario con ese correo';
+        } else if (wasRegistered === RegisterStatus.RUT_ALREADY_EXISTS) {
+          toast.message = '¡Error! Ya existe un usuario con ese rut';
+        } else {
+          toast.message = '¡Error! No se pudo registrar el usuario';
+        }
         await toast.present();
       }
     }

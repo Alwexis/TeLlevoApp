@@ -5,6 +5,7 @@ import { StorageService } from './storage.service';
 import { ViajeStatus } from '../enums/viaje-status';
 import { AgendarStatus } from '../enums/agendar-status';
 import { AuthService } from './auth.service';
+import { interval } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,15 @@ export class ViajesService {
     viajes: new Map<string, Viaje>(),
     lastId: 0
   };
+
+  intervalo = interval(60000);
+  suscripcion = this.intervalo.subscribe(() => {
+    this.viajesData.viajes.forEach(viaje => {
+      let fecha = new Date(viaje.fecha).getTime();
+      let fechaActual = new Date().getTime();
+      if (fecha < fechaActual && viaje.estatus != ViajeStatus.CANCELED) { this.changeStatus(viaje.id, ViajeStatus.COMPLETED); }
+    })
+  });
 
   constructor(private _storage: StorageService, private _auth: AuthService) { }
 

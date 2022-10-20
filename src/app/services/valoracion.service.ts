@@ -4,8 +4,6 @@ import { Valoracion, Valoraciones } from '../interfaces/valoracion';
 import { Viaje } from '../interfaces/viajes';
 import { StorageService } from './storage.service';
 import { ViajesService } from './viajes.service';
-import { interval } from 'rxjs';
-import { ViajeStatus } from '../enums/viaje-status';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +13,6 @@ export class ValoracionService {
     valoraciones: [],
     lastId: 0
   }
-
-  intervalo = interval(60000);
-  suscripcion = this.intervalo.subscribe(() => {
-    this._viajes.get().viajes.forEach(viaje => {
-      let fecha = new Date(viaje.fecha).getTime();
-      let fechaActual = new Date().getTime();
-      if (fecha < fechaActual) { this._viajes.changeStatus(viaje.id, ViajeStatus.COMPLETED); }
-    })
-  });
 
   constructor(private _storage: StorageService, private _viajes: ViajesService) {}
 

@@ -29,7 +29,8 @@
             <label *ngIf="conductor.foto != ''; else doesntHaveFoto">
               <a
                 style="display: flex; flex-direction: row; align-content: center; justify-content: center; align-items: center;">
-                <img src="{{conductor.foto}}" style="width: 4vh; height: 4vh; border: 1px solid; margin-right: 1vh;"> {{conductor.nombre}}
+                <img src="{{conductor.foto}}" style="width: 4vh; height: 4vh; border: 1px solid; margin-right: 1vh;">
+                {{conductor.nombre}}
               </a>
             </label>
             <ng-template #doesntHaveFoto>
@@ -73,13 +74,16 @@
           <span style="font-size: 2.5vh; border-bottom: 1px solid; padding: 0.25vh 0vh;">
             Estado del Viaje
           </span>
-          <p *ngIf="viaje.estatus == 'Completado'" style="color: var(--ion-color-success); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
+          <p *ngIf="viaje.estatus == 'Completado'"
+            style="color: var(--ion-color-success); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
             <ion-icon name="checkmark-circle-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
           </p>
-          <p *ngIf="viaje.estatus == 'Pendiente'" style="color: var(--ion-color-warning); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
+          <p *ngIf="viaje.estatus == 'Pendiente'"
+            style="color: var(--ion-color-warning); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
             <ion-icon name="time-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
           </p>
-          <p *ngIf="viaje.estatus == 'Cancelado'" style="color: var(--ion-color-danger); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
+          <p *ngIf="viaje.estatus == 'Cancelado'"
+            style="color: var(--ion-color-danger); font-size: 2vh; margin-top: 1.25vh; display: flex; align-items: center;">
             <ion-icon name="close-circle-outline" style="margin-right: 0.5vh;"></ion-icon> {{viaje.estatus}}
           </p>
         </ion-label>
@@ -125,18 +129,18 @@
       <!--? Opciones de Usuario que tiene el Viaje -->
       <ion-item *ngIf="gotTheRide">
         <ion-button [disabled]="viaje.estatus != 'Pendiente'" (click)="cancelarReserva()"
-        style="color: var(--ion-color-danger); margin-top: 2vh; font-size: 2vh;" fill="clear" shape="round">
+          style="color: var(--ion-color-danger); margin-top: 2vh; font-size: 2vh;" fill="clear" shape="round">
           <ion-icon name="ban-outline" style="margin-right: 1vh;"></ion-icon> Cancelar Reserva
         </ion-button>
-        <ion-button *ngIf="viaje.estatus == 'Completado'"
-        [disabled]="didQualified" (click)="onClick()" fill="clear" shape="round" color="warning">
-          <ion-icon slot="start" name="star-outline"></ion-icon> Valorar
-        </ion-button>
       </ion-item>
+      <ion-button style="display: flex; align-self: center;" *ngIf="gotTheRide && viaje.estatus == 'Completado'"
+        [disabled]="didQualified" (click)="onClick()" fill="clear" shape="round" color="warning">
+        <ion-icon slot="start" name="star-outline"></ion-icon> Valorar
+      </ion-button>
       <!--? Opciones de Usuario que no es el conductor y no tiene el viaje -->
       <ion-item *ngIf="!gotTheRide && conductor.correo !== usuario.correo">
         <ion-button [disabled]="viaje.estatus != 'Pendiente'" (click)="reservar()"
-        style="color: var(--ion-color-primary); margin-top: 2vh; font-size: 2vh;" fill="clear" shape="round">
+          style="color: var(--ion-color-primary); margin-top: 2vh; font-size: 2vh;" fill="clear" shape="round">
           <ion-icon name="checkmark-outline" style="margin-right: 1vh;"></ion-icon> Reservar Viaje
         </ion-button>
       </ion-item>

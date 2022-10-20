@@ -8,6 +8,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { Session } from '../interfaces/session';
 import { HttpClient } from '@angular/common/http';
 import { DbService } from './db.service';
+import { RegisterStatus } from '../enums/register-status';
 
 @Injectable({
   providedIn: 'root'
@@ -118,19 +119,21 @@ export class AuthService {
       },
     }
     if (!this.userData.users.has(user.correo)) {
-      this._encrypt.encrypt(credentials['contrasena']).subscribe(async (data) => {
-        user.contrasena = data['Digest'];
-        this.userData.users.set(user.correo, user);
-        await this._storage.addData('usuarios', this.userData);
-        await this._storage.addData('session', user);
-        //! No se puede conectar a MongoDB aquí.
-        //this._db.insertOne('usuarios', user);
-        this._router.navigate(['/home']);
-      });
-      return true;
-    } else {
-      return false;
+      if (!this.rutDoesExists(user.rut)) {
+        this._encrypt.encrypt(credentials['contrasena']).subscribe(async (data) => {
+          user.contrasena = data['Digest'];
+          this.userData.users.set(user.correo, user);
+          await this._storage.addData('usuarios', this.userData);
+          await this._storage.addData('session', user);
+          //! No se puede conectar a MongoDB aquí.
+          //this._db.insertOne('usuarios', user);
+          this._router.navigate(['/home']);
+        });
+        return RegisterStatus.SUCCESSFUL;
+      }
+      return RegisterStatus.RUT_ALREADY_EXISTS;
     }
+    return RegisterStatus.ALREADY_REGISTERED;
   }
 
   async updateUser(user: Usuario) {
@@ -152,9 +155,20 @@ export class AuthService {
     return this.userData.users.has(email);
   }
 
-  async verifyMail(email: string, code: string) {
+  rutDoesExists(rut: string) {
+    let existe = false;
+    for (let usuario of this.userData.users.keys()) {
+      if (this.userData.users.get(usuario)['rut'] == rut) {
+        existe = true;
+        break;
+      }
+    }
+    return existe;
+  }
+
+  async verifyMail(email: string, code: string, username: string) {
     let url = 'http://localhost:3000/send-mail';
-    return this._http.post(url, { type: 'verify', to: email, code: code }).subscribe(d => {
+    return this._http.post(url, { type: 'verify', to: email, code: code, name: username }).subscribe(d => {
       console.log('Data: ' + d)
     });
   }

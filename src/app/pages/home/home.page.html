@@ -59,9 +59,15 @@
           {{viajeActual.translatedDate}}
         </p>
         <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{viajeActual.destino}}</span>
-        <p style="margin-top: 0.5vh;">
+        <p *ngIf="viajeActual.capacidad - viajeActual.pasajeros.length > 0; else noDisponible"
+          style="margin-top: 0.5vh;">
           {{viajeActual.capacidad - viajeActual.pasajeros.length}} Disponible(s) | ${{viajeActual.precio}} de Tarifa
         </p>
+        <ng-template #noDisponible>
+          <p style="margin-top: 0.5vh; color: var(--ion-color-danger);">
+            No disponible | ${{viajeActual.precio}} de Tarifa
+          </p>
+        </ng-template>
         <span
           style="display: flex; align-content: center; justify-content: center; align-items: center; flex-direction: row; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
           <p (click)="seeViajeDetails(viajeActual.id)" style="color: var(--ion-color-primary); margin: 0vh 2.5vh;">
@@ -84,9 +90,14 @@
         <ion-label style="display: flex; flex-direction: column;">
           <p style="margin-bottom: 0.5vh;">{{viaje.translatedDate}}</p>
           <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{viaje.destino}}</span>
-          <p style="margin-top: 0.5vh;">
+          <p *ngIf="viajeActual.capacidad - viajeActual.pasajeros.length > 0; else noDisponible1" style="margin-top: 0.5vh;">
             {{viajeActual.capacidad - viajeActual.pasajeros.length}} Disponible(s) | ${{viajeActual.precio}} de Tarifa
           </p>
+          <ng-template #noDisponible1>
+            <p style="margin-top: 0.5vh; color: var(--ion-color-danger);">
+              No disponible | ${{viajeActual.precio}} de Tarifa
+            </p>
+          </ng-template>
           <span style="margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
             <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary); text-align: center;">Detalles
             </p>
@@ -110,14 +121,21 @@
           <ion-label style="display: flex; flex-direction: column;">
             <p style="margin-bottom: 0.5vh;">{{viaje.translatedDate}}</p>
             <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{viaje.destino}}</span>
-            <p style="margin-top: 0.5vh;">
+            <p *ngIf="viaje.capacidad - viaje.pasajeros.length > 0; else noDisponible2" style="margin-top: 0.5vh;">
               {{viaje.capacidad - viaje.pasajeros.length}} Disponible(s) | ${{viaje.precio}} de Tarifa
             </p>
-            <span style="display: flex; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
+            <ng-template #noDisponible2>
+              <p style="margin-top: 0.5vh; color: var(--ion-color-danger);">
+                No disponible | ${{viajeActual.precio}} de Tarifa
+              </p>
+            </ng-template>
+            <span
+              style="display: flex; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
               <p (click)="agendar(viaje.id)" style="color: var(--ion-color-success); margin: 0vh 2.5vh;">
                 Agendar
               </p>
-              <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary); margin: 0vh 2.5vh; text-align: center;">
+              <p (click)="seeViajeDetails(viaje.id)"
+                style="color: var(--ion-color-primary); margin: 0vh 2.5vh; text-align: center;">
                 Detalles
               </p>
             </span>
@@ -151,11 +169,18 @@
         <ion-label style="display: flex; flex-direction: column;">
           <p style="margin-bottom: 0.5vh;">{{viaje.translatedDate}}</p>
           <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{viaje.destino}}</span>
-          <p style="margin-top: 0.5vh;">
+          <p *ngIf="viaje.capacidad - viaje.pasajeros.length > 0; else noDisponible3" style="margin-top: 0.5vh;">
             {{viaje.capacidad - viaje.pasajeros.length}} Disponible(s) | ${{viaje.precio}} de Tarifa
           </p>
-          <span style="display: flex; justify-content: center; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
-            <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary); margin: 0vh 2.5vh; text-align: center;">
+          <ng-template #noDisponible3>
+            <p style="margin-top: 0.5vh; color: var(--ion-color-danger);">
+              No disponible | ${{viajeActual.precio}} de Tarifa
+            </p>
+          </ng-template>
+          <span
+            style="display: flex; justify-content: center; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
+            <p (click)="seeViajeDetails(viaje.id)"
+              style="color: var(--ion-color-primary); margin: 0vh 2.5vh; text-align: center;">
               Detalles
             </p>
           </span>
