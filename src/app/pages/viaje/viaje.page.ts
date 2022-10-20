@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ViajesService } from 'src/app/services/viajes.service';
 import { Animation, AnimationController } from '@ionic/angular';
 import { AgendarStatus } from 'src/app/enums/agendar-status';
+import { ValoracionService } from 'src/app/services/valoracion.service';
 
 @Component({
   selector: 'app-viaje',
@@ -59,11 +60,12 @@ export class ViajePage implements OnInit {
 
   gotTheRide = false;
   hasDisplayedPasajeros = false;
+  didQualified;
 
   constructor(private _router: Router, private _route: ActivatedRoute, 
     private _auth: AuthService, private _viajes: ViajesService,
     private _modalCtrl: ModalController, private _toastCtrl: ToastController,
-    private _animCtrl: AnimationController) { }
+    private _animCtrl: AnimationController, private _valoracion: ValoracionService) { }
 
   ngOnInit() {
     this.loadData();
@@ -83,6 +85,7 @@ export class ViajePage implements OnInit {
     });
     this.viaje['translatedDate'] = this._viajes.translateDate(this.viaje.fecha);
     this.gotTheRide = this.viaje.pasajeros.includes(this.usuario.correo);
+    this.didQualified = this._valoracion.userDidRate(this.usuario.correo, this.viaje.id);
     //this.viaje = this._viajes.getViaje(id)
   }
 

@@ -4,6 +4,8 @@ import { Valoracion, Valoraciones } from '../interfaces/valoracion';
 import { Viaje } from '../interfaces/viajes';
 import { StorageService } from './storage.service';
 import { ViajesService } from './viajes.service';
+import { interval } from 'rxjs';
+import { ViajeStatus } from '../enums/viaje-status';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,16 @@ export class ValoracionService {
     lastId: 0
   }
 
-  constructor(private _storage: StorageService, private _viajes: ViajesService) { }
+  intervalo = interval(60000);
+  suscripcion = this.intervalo.subscribe(() => {
+    this._viajes.get().viajes.forEach(viaje => {
+      let fecha = new Date(viaje.fecha).getTime();
+      let fechaActual = new Date().getTime();
+      if (fecha < fechaActual) { this._viajes.changeStatus(viaje.id, ViajeStatus.COMPLETED); }
+    })
+  });
+
+  constructor(private _storage: StorageService, private _viajes: ViajesService) {}
 
   async init() {
     this.valoraciones = await this._storage.getData('valoraciones');
@@ -32,6 +43,14 @@ export class ValoracionService {
     let valoracionFinal = valoracion / valoraciones.length || 0;
     let total = valoraciones.length;
     return [valoracionFinal, total];
+  }
+
+  getValoracionesFrom(id) {
+    return this.valoraciones.valoraciones.filter(x => x.viaje == id);
+  }
+
+  userDidRate(user: string, viaje) {
+    return this.getValoracionesFrom(viaje).find(x => x.usuario == user);
   }
 
   addValoracion(viaje: Viaje, usuario: Usuario, calificacion: number, comentario: string = '') {

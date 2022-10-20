@@ -6,8 +6,7 @@ import { Viaje } from 'src/app/interfaces/viajes';
 import { AuthService } from 'src/app/services/auth.service';
 import { ViajesService } from 'src/app/services/viajes.service';
 
-import SwiperCore, { Autoplay, Keyboard, Pagination, Scrollbar, Zoom } from 'swiper';
-import { IonicSlides } from '@ionic/angular';
+import SwiperCore, { Pagination } from 'swiper';
 
 SwiperCore.use([Pagination])
 

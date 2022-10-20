@@ -27,7 +27,7 @@ export class HistorialViajesPage implements OnInit {
   viajes: Viaje[] = [];
 
   constructor(private _auth: AuthService, private _viaje: ViajesService,
-    private _router: Router) { }
+    private _router: Router) {}
 
   ngOnInit() {
     this.loadData();
@@ -45,7 +45,6 @@ export class HistorialViajesPage implements OnInit {
         this.viajes.push(viajeToAdd);
       }
     });
-    console.log(this.viajes)
   }
 
   seeViajeDetails(id) {

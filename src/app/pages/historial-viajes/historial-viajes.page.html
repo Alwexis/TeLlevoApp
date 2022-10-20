@@ -17,8 +17,8 @@
     </div>
   </div>
   <!--? Listo los Viajes del Usuario -->
-  <ion-list *ngIf="viajes.length > 0; else doesntHaveViajes">
-    <ion-item *cdkVirtualFor="let viaje of viajes">
+  <ion-list style="display: flex; flex-direction: column; align-items: center;" *ngIf="viajes.length > 0; else doesntHaveViajes">
+    <ion-item style="margin: 1vh 0vh;" lines="full" *ngFor="let viaje of viajes">
       <ion-label>
         <p style="margin-bottom: 0.5vh;">
           {{viaje.translatedDate}}

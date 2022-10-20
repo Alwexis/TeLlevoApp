@@ -98,6 +98,13 @@ export class ViajesService {
     return false;
   }
 
+  changeStatus(id, status: ViajeStatus) {
+    if (this.viajesData.viajes.has(id.toString())) {
+      this.viajesData.viajes.get(id.toString()).estatus = status;
+      this._storage.addData('viajes', this.viajesData);
+    }
+  }
+
   async getRide(viaje, user: Usuario) {
     if (this.viajesData.viajes.get(viaje.toString()).capacidad - this.viajesData.viajes.get(viaje.toString()).pasajeros.length > 0) {
       if (this.viajesData.viajes.get(viaje.toString()).pasajeros.filter(pasajero => pasajero === user.correo).length === 0) {
@@ -125,19 +132,6 @@ export class ViajesService {
       }
     }
     return false;
-  }
-
-  async getRide(viaje, user: Usuario) {
-    if (this.viajesData.viajes.get(viaje.toString()).capacidad - this.viajesData.viajes.get(viaje.toString()).pasajeros.length > 0) {
-      if (this.viajesData.viajes.get(viaje.toString()).pasajeros.filter(pasajero => pasajero.correo === user.correo).length === 0) {
-        this.viajesData.viajes.get(viaje.toString()).pasajeros.push(user);
-        await this._storage.addData('viajes', this.viajesData);
-        return AgendarStatus.DONE;
-      } else {
-        return AgendarStatus.ALREADY_TAKEN;
-      }
-    }
-    return AgendarStatus.NOT_ENOUGH_SPACE;
   }
 
   translateDate(date: Date) {

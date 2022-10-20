@@ -42,9 +42,9 @@ export class HomePage {
     private _auth: AuthService, private _viajes: ViajesService,
     private _toastCtrl: ToastController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.loadData();
     this.cerrarMenu();
-    this.loadData();
   }
 
   async loadData() {
