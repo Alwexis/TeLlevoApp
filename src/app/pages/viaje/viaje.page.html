@@ -134,7 +134,7 @@
         </ion-button>
       </ion-item>
       <ion-button style="display: flex; align-self: center;" *ngIf="gotTheRide && viaje.estatus == 'Completado'"
-        [disabled]="didQualified" (click)="onClick()" fill="clear" shape="round" color="warning">
+        [disabled]="didQualified" id="valorar-viaje-mdl" fill="clear" shape="round" color="warning">
         <ion-icon slot="start" name="star-outline"></ion-icon> Valorar
       </ion-button>
       <!--? Opciones de Usuario que no es el conductor y no tiene el viaje -->
@@ -146,6 +146,38 @@
       </ion-item>
     </ion-list>
   </div>
+  <!--? Modal Valorar -->
+  <ion-modal #valorarviaje trigger="valorar-viaje-mdl" name="valorar-viaje" id="valorar-viaje">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button style="color: red;" (click)="closeModal()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Editar Viaje</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #valorarviaje="ngForm" (ngSubmit)="valorarViaje()">
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa una calificación</ion-label>
+            <ion-range #calificacion [pin]="true" [pinFormatter]="pinFormatter">
+              <ion-icon slot="start" name="sad-outline"></ion-icon>
+              <ion-icon slot="end" name="happy-outline"></ion-icon>
+            </ion-range>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Descripción (opcional)</ion-label>
+            <ion-textarea name="descripcion" [(ngModel)]="valoracion.comentario"
+              placeholder="Fue un viaje muy..." mode="ios"></ion-textarea>
+          </ion-item>
+          <ion-button [disabled]="valorarviaje.invalid" type="submit" expand="block" fill="clear" shape="round">
+            Valorar
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
   <!--? Modal Editar -->
   <ion-modal #editarviaje trigger="editar-viaje-mdl" name="editar-viaje" id="editar-viaje">
     <ng-template>
@@ -193,7 +225,7 @@
             <ion-textarea name="descripcion" [(ngModel)]="viaje.descripcion"
               placeholder="Auto de marca ... y color ..., estacionado en ..." mode="ios"></ion-textarea>
           </ion-item>
-          <ion-button [disabled]="unviaje.invalid" type="submit" expand="block" fill="clear" shape="round">
+          <ion-button [disabled]="editarviaje.invalid" type="submit" expand="block" fill="clear" shape="round">
             Agregar
           </ion-button>
         </form>

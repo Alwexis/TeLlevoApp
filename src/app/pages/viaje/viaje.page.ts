@@ -53,9 +53,15 @@ export class ViajePage implements OnInit {
     tutoriales: {},
   }
 
+  valoracion = {
+    calificacion: 0,
+    comentario: '',
+  }
+
   pasajeros: Usuario[] = [];
 
   @ViewChild('fecha') fecha: IonDatetime;
+  @ViewChild('calificacion') calificacion: number;
   hoy = new Date().toISOString();
 
   gotTheRide = false;
@@ -209,6 +215,25 @@ export class ViajePage implements OnInit {
       });
       await toast.present();
     }
+  }
+
+  pinFormatter(value: number) {
+    return `${Math.round(value/10)}`;
+  }
+
+  async valorarViaje() {
+    this.valoracion.calificacion = Math.round(this.calificacion['value'] / 10)
+    this._valoracion.addValoracion(this.viaje, this.usuario, this.valoracion.calificacion, this.valoracion.comentario);
+    this._modalCtrl.getTop().then(modal => modal.dismiss());
+    await this.loadData();
+    const toast = await this._toastCtrl.create({
+      message: '¡Has valorado el Viaje!',
+      duration: 1500,
+      position: 'bottom',
+      icon: "star-outline"
+    });
+    await toast.present();
+    this._router.navigate(['/historial-viajes']);
   }
 
   closeModal() {
