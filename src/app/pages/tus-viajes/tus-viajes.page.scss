@@ -1,0 +1,21 @@
+.content-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.resumen-lista-viajes {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2vh;
+  }
+  
+  .resumen-lista-viajes-viaje {
+    display: flex;
+    flex-direction: column;
+    margin: 2vh 0vh;
+    border: 0.25px solid;
+    padding: 1vh;
+    width: 100%;
+  }

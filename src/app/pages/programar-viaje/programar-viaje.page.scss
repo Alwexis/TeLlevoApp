@@ -1,0 +1,85 @@
+.content-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    margin-top: 2.5vh;
+    font-weight: 600;
+    font-size: 3.5vh;
+    max-width: 80%;
+    word-break: break-word;
+    white-space: pre-line;
+    text-align: center;
+}
+
+.subtitle {
+    margin-top: 2vh;
+    word-break: break-word;
+    max-width: 32vh;
+    text-align: center;
+}
+
+.opcion {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /*
+    Cambiado por Padding
+    margin: 4vh 0vh;
+    */
+    padding: 2.5vh 0vh;
+}
+
+.opcion-icon {
+    width: 10vh;
+    height: 10vh;
+    margin-top: 2.5vh;
+    border: 2px solid;
+    border-radius: 50%;
+    padding: 1vh;
+}
+
+.opcion-title {
+    margin-top: 1vh;
+    font-size: 2.75vh;
+    font-weight: 600;
+    border-bottom: 1.5px solid;
+}
+
+.opcion-desc {
+    word-break: break-word;
+    max-width: 32vh;
+    margin-top: 1vh;
+}
+
+.add_button {
+    margin-top: 4vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+    padding: 2vh 4vh 2vh 4vh;
+}
+
+.viaje-card {
+    width: 40vh !important;
+    display: flex;
+    align-self: flex-start;
+    align-content: center;
+    align-items: center;
+}
+
+[ng-reflect-disabled=true] {
+    color: red;
+}
+
+[ng-reflect-disabled=false] {
+    color: lime;
+}

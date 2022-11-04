@@ -1,0 +1,163 @@
+<table role="presentation" align="center" border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#F3F2EF"
+    style="background-color:#f3f2ef;table-layout:fixed">
+    <tbody>
+        <tr>
+            <td align="center" style="padding-top: 24px; padding-bottom: 24px;">
+                <center style="width:100%">
+                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="512"
+                        style="background-color:transparent;margin:0 auto;max-width:512px;width:inherit">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="#FFFFFF"
+                                    style="background-color:#ffffff;padding:32px 32px 0 32px;border-bottom:0px">
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%"
+                                        style="width:100%!important;min-width:100%!important">
+                                        <tbody>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <img alt="TeLlevoApp logo" border="0"
+                                                        src="https://imgur.com/ehKaFBg.png" height="38"
+                                                        style="max-height:38px;outline:none;color:#ffffff;max-width:unset!important;text-decoration:none"
+                                                        data-bit="iit">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <table role="presentation" border="0" cellspacing="0"
+                                                        cellpadding="0" width="100%">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding:0">
+                                                                    <table role="presentation" border="0"
+                                                                        cellspacing="0" cellpadding="0" width="100%">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td align="center" bgcolor="#FFFFFF"
+                                                                                    style="background-color:#ffffff;padding:24px 0">
+                                                                                    <h2
+                                                                                        style="margin:0;color:#000000;font-weight:500;font-size:24px;line-height:1.333">
+                                                                                        ¡Bienvenid@ a TeLlevoApp!
+                                                                                    </h2>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <table role="presentation"
+                                                                                        border="0" cellspacing="0"
+                                                                                        cellpadding="0" width="100%"
+                                                                                        style="border-spacing:0">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    <hr
+                                                                                                        style="background-color:#d9d9d9;margin:0;color:#d9d9d9;border-color:#d9d9d9;border-width:0;border-style:solid;height:1px">
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td bgcolor="#FFFFFF"
+                                                                                                    style="background-color:#ffffff;padding:24px 32px 24px 32px">
+                                                                                                    <table
+                                                                                                        role="presentation"
+                                                                                                        border="0"
+                                                                                                        cellspacing="0"
+                                                                                                        cellpadding="0"
+                                                                                                        width="100%">
+                                                                                                        <tbody>
+                                                                                                            <tr>
+                                                                                                                <td align="center"
+                                                                                                                    style="padding-bottom:24px">
+                                                                                                                    <span
+                                                                                                                        style="color:#262626;font-weight:400;font-size:16px;line-height:1.25">
+                                                                                                                        Para
+                                                                                                                        continuar
+                                                                                                                        con
+                                                                                                                        el
+                                                                                                                        registro
+                                                                                                                        de
+                                                                                                                        tu
+                                                                                                                        cuenta
+                                                                                                                        en
+                                                                                                                        nuestra
+                                                                                                                        aplicación,
+                                                                                                                        por
+                                                                                                                        favor
+                                                                                                                        copia
+                                                                                                                        el
+                                                                                                                        código
+                                                                                                                        generado
+                                                                                                                        abajo
+                                                                                                                        y
+                                                                                                                        pégalo
+                                                                                                                        en
+                                                                                                                        la
+                                                                                                                        casilla
+                                                                                                                        correspondiente
+                                                                                                                        en
+                                                                                                                        la
+                                                                                                                        aplicación.
+                                                                                                                    </span>
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td
+                                                                                                                    align="center">
+                                                                                                                    <span
+                                                                                                                        style="color: black; padding: 2vh 12vh; border: 1px solid black; background-color: rgb(223, 223, 223)">
+                                                                                                                        {codigo}
+                                                                                                                    </span>
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="#FFFFFF"
+                                    style="background-color:#ffffff;padding:24px 32px 24px 32px;border-bottom:0px">
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%"
+                                        style="width:100%!important;min-width:100%!important">
+                                        <tbody>
+                                            <tr>
+                                                <td align="center" valign="middle">
+                                                    <img alt="DuocUC Logo" border="0"
+                                                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Logo_DuocUC.svg/2560px-Logo_DuocUC.svg.png"
+                                                        height="38"
+                                                        style="max-height:38px;outline:none;color:#ffffff;max-width:unset!important;text-decoration:none"
+                                                        data-bit="iit">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+            </td>
+        </tr>
+    </tbody>
+</table>

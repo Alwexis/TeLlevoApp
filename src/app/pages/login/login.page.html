@@ -8,16 +8,16 @@
   <div class="page-body">
     <span>Iniciar Sesión</span>
     <ion-icon name="person-circle-outline" style="width: 16vh; height: 16vh; margin-top: 2vh;"></ion-icon>
-    <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="iniciarsesion">
+    <form name="loginform" #loginform="ngForm" (ngSubmit)="onSubmit()" class="iniciarsesion">
       <ion-item>
         <ion-label position="floating">Correo Institucional</ion-label>
-        <ion-input required name="correo" clear-input mode="ios"></ion-input>
+        <ion-input [(ngModel)]="credenciales.correo" required name="correo" #correo clear-input mode="ios" pattern=".*(@duocuc.cl|@profesor.duoc.cl)"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Contraseña</ion-label>
-        <ion-input type="password" required name="password" clear-input mode="ios"></ion-input>
+        <ion-input [(ngModel)]="credenciales.contrasena" type="password" required name="contrasena" clear-input mode="ios"></ion-input>
       </ion-item>
-      <ion-button expand="block" class="ion-margin-top loginbutton" type="submit">
+      <ion-button expand="block" class="ion-margin-top loginbutton" type="submit" [disabled]="loginform.invalid">
         Iniciar Sesión
       </ion-button>
     </form>
@@ -25,7 +25,7 @@
       <div>
         <span>¿No tienes una cuenta? Regístrate </span> <a routerLink="/register">aquí</a>
       </div>
-      <a>¿Olvidaste tu contraseña?</a>
+      <a routerLink="/recuperar-contrasena">¿Olvidaste tu contraseña?</a>
     </div>
   </div>
 </ion-content>

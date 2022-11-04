@@ -1,20 +1,99 @@
+<!-- Header -->
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-icon slot="start" name="menu" size="large" class="ion-padding" (click)="verMenu()"></ion-icon>
     <ion-title>
-      
+      TeLlevoApp
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+<!-- Menú -->
+<ion-menu side="start" menuId="menu" contentId="main">
+  <ion-header>
+    <ion-toolbar color="dark">
+      <ion-title>Menu</ion-title>
+      <ion-icon slot="end" name="close" size="large" class="ion-padding" (click)="cerrarMenu()"></ion-icon>
     </ion-toolbar>
   </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <ion-content>
+    <ion-list>
+      <ion-item detail (click)="changePage('/perfil')">
+        <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+        Perfil
+      </ion-item>
+      <ion-item detail (click)="changePage('/viajes')">
+        <ion-icon slot="start" name="book-outline"></ion-icon>
+        Viajes
+      </ion-item>
+      <ion-item detail (click)="changePage('/programar-viaje')" *ngIf="usuario.patente != ''">
+        <ion-icon slot="start" name="car-outline"></ion-icon>
+        Programar Viaje
+      </ion-item>
+      <ion-item detail (click)="_auth.logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Salir
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-router-outlet id="main"></ion-router-outlet>
+<!-- Fin Menú -->
+<!-- Main -->
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="content-body">
+    <span class="title">Bienvenido/a, {{usuario.nombre}}</span>
+    <div *ngIf="usuario.viaje != null; else doesntHaveViaje"
+      style="margin-top: 6vh; display: flex; flex-direction: column;">
+      <ion-item>
+        <div style="display: flex; flex-direction: column;">
+          <span class="viaje-title">Viaje Programado</span>
+          <div style="margin: 0.5vh 0vh;">
+            <span class="viaje-content-title">Día:</span> <span>23/09 - 18:50</span>
+          </div>
+          <div style="margin: 0.5vh 0vh 0.75vh 0vh;">
+            <span class="viaje-content-title">Destino:</span><span style="word-break: break-word;">Los Copihues, Talcahuano.</span>
+          </div>
+          <ion-button expand="block" fill="clear" shape="round" style="color: red; font-size: 2vh;">
+            Cancelar Viaje
+          </ion-button>
+        </div>
+      </ion-item>
+    </div>
+    <ng-template #doesntHaveViaje>
+      <div style="margin-top: 6vh; display: flex; flex-direction: column;">
+        <span class="buscas-viaje">¿Buscas un Viaje?</span>
+        <span style="margin-top: 0.5vh; text-align: center;">Explora los viajes disponibles</span>
+        <section class="resumen-lista-viajes">
+          <ion-item>
+            <div class="resumen-lista-viajes-viaje">
+              <span style="font-size: 1.75vh;">22/09 - 18:50</span>
+              <span style="margin: 1vh 0vh; font-weight: 600;">Los Copihues, Talcahuano</span>
+              <span>$1500 (3 disponibles)</span>
+              <ion-button expand="block" fill="clear" shape="round" style="color: lime; font-size: 2vh;">
+                Agendar
+              </ion-button>
+            </div>
+          </ion-item>
+          <ion-item>
+            <div class="resumen-lista-viajes-viaje">
+              <span style="font-size: 1.75vh;">22/09 - 18:50</span>
+              <span style="margin: 1vh 0vh; font-weight: 600;">Leonera, Chiguayante</span>
+              <span>$3200 (2 disponibles)</span>
+              <ion-button expand="block" fill="clear" shape="round" style="color: lime; font-size: 2vh;">
+                Agendar
+              </ion-button>
+            </div>
+          </ion-item>
+        </section>
+        <section style="text-align: center; margin-top: 1.5vh;">
+          <span style="margin-right: 1vh;">¿No encontraste lo que buscabas?</span> <span style="color: blue;">Ve la lista de Viajes</span>
+        </section>
+      </div>
+    </ng-template>
+    <footer style="display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; bottom: 2.5vh; margin-left: auto; margin-right: auto; left: 0; right: 0;">
+      <span style="font-weight: 400; font-size: 2.5vh;">TeLlevoApp</span>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Logo_DuocUC.svg/2560px-Logo_DuocUC.svg.png"
+      style="width: 24vh;">
+    </footer>
   </div>
 </ion-content>

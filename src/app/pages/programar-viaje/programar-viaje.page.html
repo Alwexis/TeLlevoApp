@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button mode="ios" text="Volver" default-href="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>TeLlevoApp</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="content-body">
+    <span class="title">Programar un Viaje</span>
+    <span class="subtitle">¿Qué tipo de programación de Viaje deseas usar?</span>
+    <section>
+      <div class="opcion" id="un_viaje">
+        <ion-icon class="opcion-icon" name="car-outline"></ion-icon>
+        <span class="opcion-title">Un Viaje</span>
+        <span class="opcion-desc">Programa un único viaje, con todas las opciones disponibles.</span>
+      </div>
+      <div class="opcion" id="un_calendario">
+        <ion-icon class="opcion-icon" name="calendar-outline"></ion-icon>
+        <span class="opcion-title">Un Calendario</span>
+        <span class="opcion-desc">Programa todo un calendario de viajes, de modo que no tengas que programarlos uno a uno.</span>
+      </div>
+    </section>
+  </div>
+  <!-- Modal para un viaje -->
+  <ion-modal trigger="un_viaje" #un_viaje>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="un_viaje.dismiss()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Programar</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #unviaje="ngForm" (ngSubmit)="onSubmit('un_viaje')">
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa el destino</ion-label>
+            <ion-input type="text" placeholder="Los Copihues, Talcahuano" name="destino" [(ngModel)]="viaje.destino" mode="ios" required></ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa el precio</ion-label>
+            <ion-input type="number" placeholder="2500" name="precio" [(ngModel)]="viaje.precio" mode="ios" required></ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa la capacidad</ion-label>
+            <ion-input type="number" placeholder="4" name="capacidad" [(ngModel)]="viaje.capacidad" mode="ios" required></ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa el día</ion-label>
+            <ion-input type="date" name="fecha" [(ngModel)]="viaje.fecha" mode="ios" required></ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Ingresa la hora</ion-label>
+            <ion-input type="time" name="hora" [(ngModel)]="viaje.hora" mode="ios" required></ion-input>
+          </ion-item>
+          <ion-item style="margin: 2vh 0vh;">
+            <ion-label position="stacked">Descripción (opcional)</ion-label>
+            <ion-textarea name="descripcion" [(ngModel)]="viaje.descripcion" placeholder="Auto de marca ... y color ..., estacionado en ..." mode="ios"></ion-textarea>
+          </ion-item>
+          <ion-button [disabled]="unviaje.invalid" type="submit" expand="block" fill="clear" shape="round">
+            Agregar
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <!-- Fin del Modal para un Viaje -->
+  <!-- Modal para un Calendario -->
+  <ion-modal trigger="un_calendario" #un_calendario>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="un_calendario.dismiss()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Programar</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="confirmarViaje('un_calendario')" [strong]="true">Confirmar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="content-body">
+          <span style="text-align: center;">Programa tu Calendario, haz click en el símbolo <ion-icon name="add-circle-outline"></ion-icon> para añadir un viaje.</span>
+          <!-- Add -->
+          <div class="add_button" (click)="addViajeMenu()">
+            <ion-icon name="add-circle-outline" style="width: 8vh; height: 8vh;"></ion-icon>
+            <span style="font-weight: 600; font-size: 2.5vh;">Añadir un Viaje</span>
+          </div>
+          <!-- End Add -->
+          <!-- Viajes List -->
+          <ion-list class="viajes-list" #viajes_list>
+          </ion-list>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <!-- Fin del Modal para un Viaje -->
+</ion-content>

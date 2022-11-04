@@ -1,0 +1,67 @@
+.body-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.body-page img {
+    width: 24vh;
+    height: 24vh;
+    border-radius: 4vh;
+    border: 1.5px solid;
+}
+
+.nombreUsuario {
+    font-size: 3vh;
+    margin-top: 1.5vh;
+    margin-bottom: 0.5vh;
+}
+
+.calificacion {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.calificacion::content {
+    margin: 1vh 1.5vh;
+    color: gold;
+    font-size: 2.5vh;
+}
+
+.informacion-usuario {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 2vh;
+    padding: 2vh;
+    border: 1px solid;
+    border-radius: 2vh;
+}
+
+.informacion-usuario div {
+    display: flex;
+    flex-direction: row;
+    margin: 2vh;
+}
+
+.info-user-titulo {
+    border-bottom: 1px solid;
+    margin-right: 1vh;
+}
+
+.reportar-usuario::content {
+    margin-top: 2vh;
+    color: red;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2vh;
+}
