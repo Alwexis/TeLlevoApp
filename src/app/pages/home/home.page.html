@@ -95,7 +95,7 @@
           </p>
           <ng-template #noDisponible1>
             <p style="margin-top: 0.5vh; color: var(--ion-color-danger);">
-              No disponible | ${{viajeActual.precio}} de Tarifa
+              No disponible | ${{viaje.precio}} de Tarifa
             </p>
           </ng-template>
           <span style="margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
@@ -110,7 +110,7 @@
   <!--? No tiene un Viaje Reservado -->
   <ng-template #doesntHaveViaje>
     <div class="content-body">
-      <div style="margin-top: 6vh; display: flex; flex-direction: column;">
+      <div style="margin-top: 2vh; display: flex; flex-direction: column;">
         <span class="buscas-viaje">¿Buscas un Viaje?</span>
         <span style="margin-top: 0.5vh; text-align: center;">Explora los viajes disponibles</span>
       </div>
@@ -126,7 +126,7 @@
             </p>
             <ng-template #noDisponible2>
               <p style="margin-top: 0.5vh; color: var(--ion-color-danger);">
-                No disponible | ${{viajeActual.precio}} de Tarifa
+                No disponible | ${{viaje.precio}} de Tarifa
               </p>
             </ng-template>
             <span
@@ -143,7 +143,7 @@
         </ion-item>
       </ng-template>
     </swiper>
-    <section *ngIf="lastViajes.length > 0;" style="text-align: center; margin-top: 1.5vh;">
+    <section *ngIf="lastViajes.length > 0;" style="text-align: center;">
       <span style="margin-right: 1vh;">¿No encontraste lo que buscabas?</span> <span style="color: blue;">Ve la
         lista de Viajes</span>
     </section>
@@ -191,17 +191,17 @@
   <ng-template *ngIf="usuario.patente != ''" #haventCreatedViajes>
     <div
       style="margin: 2.5vh 0vh; display: flex; flex-direction: column; align-content: center; justify-content: center; align-items: center;">
-      <span style="color: red; text-align: center;">No hay viajes programados :(</span>
-      <a (click)="loadData()" style="text-align: center; margin: 1vh 0vh;">
-        <ion-icon name="refresh-outline"></ion-icon> Recargar
-      </a>
+      <span style="color: red; text-align: center;">Aún no has programado ningún viaje</span>
+      <ion-button (click)="changePage('programar-viaje')" expand="block" fill="clear" shape="round">
+        Programar Viaje
+      </ion-button>
     </div>
   </ng-template>
   <!--? Fin de Viajes del Usuario -->
   <!--? Footer -->
   <div class="content-body">
     <footer
-      style="display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; bottom: 2.5vh; margin-left: auto; margin-right: auto; left: 0; right: 0;">
+      style="display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; bottom: 2vh;">
       <span style="font-weight: 400; font-size: 2.5vh;">TeLlevoApp</span>
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Logo_DuocUC.svg/2560px-Logo_DuocUC.svg.png"
         style="width: 24vh;">

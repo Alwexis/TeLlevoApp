@@ -21,7 +21,6 @@ export class HistorialViajesPage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
-    tutoriales: {},
   }
 
   viajes: Viaje[] = [];
@@ -37,7 +36,7 @@ export class HistorialViajesPage implements OnInit {
     this.viajes = [];
     this.usuario = await this._auth.getSession();
     //? Obtengo los viajes del usuario
-    let viajes: Viajes = this._viaje.get();
+    let viajes: Viajes = await this._viaje.get();
     viajes.viajes.forEach(viaje => {
       if (viaje.pasajeros.includes(this.usuario.correo)) {
         let viajeToAdd = viaje;

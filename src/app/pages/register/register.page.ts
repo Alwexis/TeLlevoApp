@@ -152,13 +152,22 @@ export class RegisterPage implements OnInit {
 
   formatString(type: string) {
     if (type === 'rut') {
-      if (/(([0-9]{1,2})\.([0-9]{3})\.([0-9]{3})-([0-9]|k)|([0-9]{8}[0-9|k]{1}))/.test(this.credenciales.rut)) {
-        let rut = this.credenciales.rut.substring(0, this.credenciales.rut.length - 1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        let dv = this.credenciales.rut.substring(this.credenciales.rut.length - 1);
+      const idealPattern = /[0-9]{2}\.[0-9]{3}\.[0-9]-([0-9]|k)/;
+      const acceptablePattern = /[0-9]{2}(\.?)[0-9]{3}(\.?)[0-9]{3}(\.?)(-?)[0-9k]/;
+      if (idealPattern.test(this.credenciales.rut)) return;
+      if (acceptablePattern.test(this.credenciales.rut)) {
+        const newRut = this.credenciales.rut.replace('-', '');
+        let rut = newRut.substring(0, newRut.length - 1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        let dv = newRut.substring(newRut.length - 1);
         this.credenciales.rut = rut + '-' + dv;
       }
     } else if (type === 'patente') {
-      this.credenciales.patente = this.credenciales.patente.match(/[a-zA-Z0-9]{2}/g).join("-").toUpperCase();
+      const idealPattern = /^[a-zA-Z]{2}-[a-zA-Z0-9]{2}-[a-zA-Z0-9]{2}$/;
+      const acceptablePattern = /^[a-zA-Z]{2}(-?)[a-zA-Z0-9]{2}(-?)[a-zA-Z0-9]{2}$/;
+      if (idealPattern.test(this.credenciales.patente)) return;
+      if (acceptablePattern.test(this.credenciales.patente)) {
+        this.credenciales.patente = this.credenciales.patente.match(/[a-zA-Z0-9]{2}/g).join("-").toUpperCase();
+      }
     }
   }
 

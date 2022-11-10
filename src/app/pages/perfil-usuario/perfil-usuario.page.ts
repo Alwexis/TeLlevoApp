@@ -22,7 +22,6 @@ export class PerfilUsuarioPage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
-    tutoriales: {},
   }
 
   changes = {
@@ -45,6 +44,7 @@ export class PerfilUsuarioPage implements OnInit {
 
   async loadData() {
     this.usuario = await this._auth.getSession();
+    console.log(this.usuario);
   }
 
   async changeDriverStatus() {

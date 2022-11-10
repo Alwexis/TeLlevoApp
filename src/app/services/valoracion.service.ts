@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Usuario } from '../interfaces/usuarios';
 import { Valoracion, Valoraciones } from '../interfaces/valoracion';
 import { Viaje } from '../interfaces/viajes';
+import { DbService } from './db.service';
 import { StorageService } from './storage.service';
 import { ViajesService } from './viajes.service';
 
@@ -10,39 +11,43 @@ import { ViajesService } from './viajes.service';
 })
 export class ValoracionService {
   valoraciones: Valoraciones = {
-    valoraciones: [],
+    valoraciones: new Map<string, Valoracion>(),
     lastId: 0
   }
 
-  constructor(private _storage: StorageService, private _viajes: ViajesService) {}
+  constructor(private _storage: StorageService, private _viajes: ViajesService,
+    private _db: DbService) {}
 
   async init() {
-    this.valoraciones = await this._storage.getData('valoraciones');
-    if (this.valoraciones == null) {
-      this.valoraciones = await this._storage.addData('valoraciones', { valoraciones: [], lastId: 0 });
-    }
-    return this.valoraciones;
+    const valoraciones = await this._db.get('valoracion') as [];
+    this.valoraciones = { valoraciones: new Map(valoraciones.map((valoracion) => [valoracion['id'], valoracion])), lastId: 0 };
   }
 
-  getValoracion(user: Usuario) {
-    let viajes = this._viajes.getFrom(user).map(x => x.id);
+  async getValoracion(user: Usuario) {
+    let viajes = await this._viajes.getFrom(user);
+    viajes = viajes.map(x => x.id);
     let valoracion = 0;
-    let valoraciones = this.valoraciones.valoraciones.filter(x => viajes.includes(x.viaje));
-    valoraciones.forEach(x => { valoracion += x.valoracion; });
-    let valoracionFinal = valoracion / valoraciones.length || 0;
-    let total = valoraciones.length;
+    let total = 0;
+    this.valoraciones.valoraciones.forEach(x => {
+      if (viajes.includes(x.viaje)) {
+        valoracion += x.valoracion;
+        total++;
+      }
+    })
+    let valoracionFinal = valoracion / total || 0;
     return [valoracionFinal, total];
   }
 
-  getValoracionesFrom(id) {
-    return this.valoraciones.valoraciones.filter(x => x.viaje == id);
+  async getValoracionesFrom(id) {
+    const valoraciones = await this._db.get('Valoracion', ["viaje=" + id]);
+    return valoraciones;
   }
 
-  userDidRate(user: string, viaje) {
-    return this.getValoracionesFrom(viaje).find(x => x.usuario == user);
+  async userDidRate(user: string, viaje) {
+    return false;
   }
 
-  addValoracion(viaje: Viaje, usuario: Usuario, calificacion: number, comentario: string = '') {
+  async addValoracion(viaje: Viaje, usuario: Usuario, calificacion: number, comentario: string = '') {
     this.valoraciones.lastId++;
     let valoracion: Valoracion = {
       id: this.valoraciones.lastId,
@@ -51,12 +56,13 @@ export class ValoracionService {
       valoracion: calificacion,
       comentario: comentario
     }
-    this.valoraciones.valoraciones.push(valoracion);
-    this._storage.addData('valoraciones', this.valoraciones);
+    let added = await this._db.insertOne('Valoracion', valoracion, true);
+    await this.init();
+    return added != null;
   }
 
-  deleteValoracion(id: number) {
-    this.valoraciones.valoraciones = this.valoraciones.valoraciones.filter(x => x.id != id);
-    this._storage.addData('valoraciones', this.valoraciones);
+  async deleteValoracion(id: number) {
+    await this._db.deleteOne('Valoracion', ["id=" + id]);
+    await this.init();
   }
 }

@@ -26,7 +26,6 @@ export class ProgramarViajePage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
-    tutoriales: {}
   }
 
   viaje: Viaje = {

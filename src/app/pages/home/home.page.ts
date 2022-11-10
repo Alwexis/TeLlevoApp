@@ -28,12 +28,12 @@ export class HomePage {
     foto: '',
     viaje: null,
     numero: null,
-    tutoriales: {},
   };
 
   lastViajes = [];
 
-  viajeActual: Viaje = { id: null, fecha: null, destino: '', precio: null, capacidad: null, descripcion: '', conductor: null, pasajeros: [], valoraciones: [], estatus: null,
+  viajeActual: Viaje = {
+    id: null, fecha: null, destino: '', precio: null, capacidad: null, descripcion: '', conductor: null, pasajeros: [], valoraciones: [], estatus: null,
   }
 
   viajesUsuario: Viaje[] = [];
@@ -48,14 +48,21 @@ export class HomePage {
   }
 
   async loadData() {
-    this.lastViajes = []; this.viajesUsuario = [];
+    // Eliminar datos anteriores
+    this.lastViajes = [];
+    this.viajesUsuario = [];
+    // Recargar datos
+    await this._auth.refreshUsers();
     this.usuario = await this._auth.getSession();
+    // Cargar viaje que tomó el Usuario
     if (this.usuario.viaje != null) {
-      this.viajeActual = this._viajes.getViaje(this.usuario.viaje);
-      this.viajeActual['translatedDate'] = this._viajes.translateDate(new Date(this.viajeActual.toString()));
+      this.viajeActual = await this._viajes.getViaje(this.usuario.viaje);
+      this.viajeActual['translatedDate'] = this._viajes.translateDate(new Date(this.viajeActual.fecha.toString()));
     }
-    if (this.usuario.patente != null) {
-      let viajesDelUsuario = this._viajes.getFrom(this.usuario).sort((a: Viaje, b: Viaje) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    // Cargar viajes que el Usuario creó
+    if (this.usuario.patente != '') {
+      let viajesDelUsuario = await this._viajes.getFrom(this.usuario);
+      viajesDelUsuario = viajesDelUsuario.sort((a: Viaje, b: Viaje) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
       for (let viaje of viajesDelUsuario) {
         if (this.viajesUsuario.length < 5) {
           let viajeAPushear = viaje;
@@ -64,20 +71,26 @@ export class HomePage {
         } else { break; }
       }
     }
-    let viajes = this._viajes.get();
-    let viajesArray = Array.from(viajes.viajes.values()).filter(x => x.conductor != this.usuario.correo);
-    let stop = false; let i = 1;
-    while (!stop) {
-      let last: number;
-      if (viajesArray.length > i - 1 && viajesArray.length < 5 && last != i) {
-        let viaje = viajesArray[viajesArray.length - i];
-        viaje['translatedDate'] = this._viajes.translateDate(new Date(viaje.fecha.toString()));
-        this.lastViajes.push(viaje);
-        last = i;
-      } else {
-        stop = true;
+    let viajes = await this._viajes.get();
+    let viajesArray = Array.from(viajes.viajes.values()).filter(viaje => viaje.conductor != this.usuario.correo && viaje.pasajeros.indexOf(this.usuario.correo) == -1);
+    if (viajesArray.length > 0) {
+      let ultimoViaje;
+      // Como no se puede romper un forEach, utilizo una excepción para salir del ciclo.
+      const BreakException = {};
+      try {
+        viajesArray.forEach((viaje, index) => {
+          if (index < 5 && ultimoViaje != index) {
+            let viajeAMostrar = viaje;
+            viajeAMostrar['translatedDate'] = this._viajes.translateDate(new Date(viaje.fecha.toString()));
+            this.lastViajes.push(viajeAMostrar);
+            ultimoViaje = index;
+          } else {
+            throw BreakException;
+          }
+        })
+      } catch (e) {
+        if (e !== BreakException) throw e;
       }
-      i++;
     }
   }
 

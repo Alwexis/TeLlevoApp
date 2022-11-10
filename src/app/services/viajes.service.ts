@@ -5,7 +5,7 @@ import { StorageService } from './storage.service';
 import { ViajeStatus } from '../enums/viaje-status';
 import { AgendarStatus } from '../enums/agendar-status';
 import { AuthService } from './auth.service';
-import { interval } from 'rxjs';
+import { DbService } from './db.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,19 +16,10 @@ export class ViajesService {
     viajes: new Map<string, Viaje>(),
     lastId: 0
   };
+  constructor(private _storage: StorageService, private _auth: AuthService,
+    private _db: DbService) { }
 
-  intervalo = interval(60000);
-  suscripcion = this.intervalo.subscribe(() => {
-    this.viajesData.viajes.forEach(viaje => {
-      let fecha = new Date(viaje.fecha).getTime();
-      let fechaActual = new Date().getTime();
-      if (fecha < fechaActual && viaje.estatus != ViajeStatus.CANCELED) { this.changeStatus(viaje.id, ViajeStatus.COMPLETED); }
-    })
-  });
-
-  constructor(private _storage: StorageService, private _auth: AuthService) { }
-
-  async init() {
+  async _init() {
     this.viajesData = await this._storage.getData('viajes');
     if (this.viajesData == undefined || this.viajesData == null) {
       this.viajesData = await this._storage.addData('viajes', { viajes: new Map<string, Viaje>(), lastId: 0 });
@@ -36,7 +27,13 @@ export class ViajesService {
     return this.viajesData
   }
 
-  getFrom(user: Usuario) {
+  async init() {
+    const viajes = await this._db.get('viajes') as [];
+    this.viajesData = { viajes: new Map(viajes.map((viaje) => [viaje['id'], viaje])), lastId: 0 };
+  }
+
+  async getFrom(user: Usuario) {
+    await this.init();
     let viajes = [];
     this.viajesData.viajes.forEach(viaje => {
       if (viaje.conductor === user.correo) {
@@ -48,20 +45,22 @@ export class ViajesService {
     //? [...this.viajesData.viajes.values()].filter(viaje => viaje.conductor.correo == user.correo)
   }
 
-  get() {
+  async get() {
+    await this.init();
     return this.viajesData;
   }
 
-  getViaje(id) {
-    return this.viajesData.viajes.get(id.toString());
+  async getViaje(id) {
+    await this.init();
+    return this.viajesData.viajes.get(id);
   }
 
   async scheduleViaje(viaje: {}) {
-    let viajesUser = this.getFrom(viaje['conductor']).filter(x => x.fecha == viaje['fecha']);
+    let viajesUser = await this.getFrom(viaje['conductor']);
+    viajesUser = viajesUser.filter(x => x.fecha == viaje['fecha']);
     if (viajesUser.length < 1) {
-      this.viajesData.lastId++;
       let newViaje: Viaje = {
-        id: this.viajesData.lastId,
+        id: -1,
         fecha: viaje['fecha'],
         destino: viaje['destino'],
         precio: viaje['precio'],
@@ -72,8 +71,8 @@ export class ViajesService {
         valoraciones: [],
         estatus: ViajeStatus.PENDING,
       }
-      this.viajesData.viajes.set(this.viajesData.lastId.toString(), newViaje);
-      let added = await this._storage.addData('viajes', this.viajesData);
+      let added = await this._db.insertOne('Viajes', newViaje, true);
+      await this.init();
       return added != null;
     }
     return false;
@@ -91,7 +90,8 @@ export class ViajesService {
             pasajeroObject.viaje = null;
             await this._auth.updateUser(user);
           })
-          await this._storage.addData('viajes', this.viajesData);
+          await this._db.updateOne('Viajes', ["id=" + viajeACancelar.id], viajeACancelar);
+          await this.init();
           return true;
         }
       }
@@ -101,27 +101,31 @@ export class ViajesService {
 
   async editViaje(viaje: Viaje, user: Usuario) {
     if (viaje.conductor === user.correo) {
-      this.viajesData.viajes.set(viaje.id.toString(), viaje);
-      await this._storage.addData('viajes', this.viajesData);
+      await this._db.updateOne('Viajes', ["id=" + viaje.id], viaje);
+      await this.init();
       return true;
     }
     return false;
   }
 
-  changeStatus(id, status: ViajeStatus) {
+  async changeStatus(id, status: ViajeStatus) {
     if (this.viajesData.viajes.has(id.toString())) {
-      this.viajesData.viajes.get(id.toString()).estatus = status;
-      this._storage.addData('viajes', this.viajesData);
+      let viaje = this.viajesData.viajes.get(id.toString())
+      viaje.estatus = status;
+      await this._db.updateOne('Viajes', ["id=" + viaje.id], viaje);
+      this.init();
     }
   }
 
   async getRide(viaje, user: Usuario) {
-    if (this.viajesData.viajes.get(viaje.toString()).capacidad - this.viajesData.viajes.get(viaje.toString()).pasajeros.length > 0) {
-      if (this.viajesData.viajes.get(viaje.toString()).pasajeros.filter(pasajero => pasajero === user.correo).length === 0) {
-        this.viajesData.viajes.get(viaje.toString()).pasajeros.push(user.correo);
-        await this._storage.addData('viajes', this.viajesData);
+    let viajeATomar = await this.getViaje(viaje);
+    if (viajeATomar.capacidad - viajeATomar.pasajeros.length > 0) {
+      if (viajeATomar.pasajeros.filter(pasajero => pasajero === user.correo).length === 0) {
+        viajeATomar.pasajeros.push(user.correo);
+        await this._db.updateOne('Viajes', ["id=" + viajeATomar.id], viajeATomar);
         user.viaje = viaje;
         await this._auth.updateUser(user)
+        await this.init();
         return AgendarStatus.DONE;
       } else {
         return AgendarStatus.ALREADY_TAKEN;
@@ -131,13 +135,15 @@ export class ViajesService {
   }
 
   async cancelRide(id, user: Usuario) {
-    if (this.viajesData.viajes.has(id.toString())) {
-      let viaje = this.viajesData.viajes.get(id.toString());
+    if (this.viajesData.viajes.has(id)) {
+      let viaje = this.viajesData.viajes.get(id);
       if (viaje.pasajeros.filter(pasajero => pasajero === user.correo).length > 0) {
-        this.viajesData.viajes.get(id.toString()).pasajeros = viaje.pasajeros.filter(pasajero => pasajero !== user.correo);
-        await this._storage.addData('viajes', this.viajesData);
+        let viaje = this.viajesData.viajes.get(id);
+        viaje.pasajeros = viaje.pasajeros.filter(pasajero => pasajero !== user.correo);
+        await this._db.updateOne('Viajes', ["id=" + viaje.id], viaje);
         user.viaje = null;
-        await this._auth.updateUser(user)
+        await this._auth.updateUser(user);
+        await this.init();
         return true;
       }
     }

@@ -24,10 +24,10 @@ export class AppComponent {
 
   async loadData() {
     await this._storage.init();
-    this._auth.loadData();
-    this._viajes.init();
-    this._report.init();
-    this._valoracion.init();
+    await this._auth.loadData();
+    await this._viajes.init();
+    await this._report.init();
+    await this._valoracion.init();
   }
   
 }

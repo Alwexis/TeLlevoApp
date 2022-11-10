@@ -1,4 +1,4 @@
-<ion-header *ngIf="!usuario.tutoriales.programarViaje">
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button mode="ios" text="Volver" default-href="/home"></ion-back-button>
@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <div class="content-body" *ngIf="!usuario.tutoriales.programarViaje">
+  <div class="content-body">
     <span class="title">Programar un Viaje</span>
     <span class="subtitle">Por favor rellene los campos con los datos correspondientes</span>
     <form #unviaje="ngForm" (ngSubmit)="onSubmit()">
@@ -49,11 +49,6 @@
       </ion-button>
     </form>
   </div>
-  <swiper *ngIf="usuario.tutoriales.programarViaje" [pagination]="true">
-    <ng-template swiperSlide>Slide 1</ng-template>
-    <ng-template swiperSlide>Slide 2</ng-template>
-    <ng-template swiperSlide>Slide 3</ng-template>
-  </swiper>
   <!--* Plantilla para listar Viajes
             <ion-item-sliding>
               <ion-item>

@@ -25,7 +25,6 @@ export class ViajePage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
-    tutoriales: {},
   }
 
   viaje: Viaje = {
@@ -50,7 +49,6 @@ export class ViajePage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
-    tutoriales: {},
   }
 
   valoracion = {
@@ -80,18 +78,19 @@ export class ViajePage implements OnInit {
   async loadData() {
     this.pasajeros = [];
     this.usuario = await this._auth.getSession();
-    this._route.queryParams.subscribe(params => {
+    this._route.queryParams.subscribe(async (params) => {
       if (params) {
-        this.viaje = this._viajes.getViaje(params['id']);
+        this.viaje = await this._viajes.getViaje(parseInt(params['id']));
+        this.conductor = this._auth.getUser(this.viaje.conductor) as Usuario;
+        this.viaje.pasajeros.forEach(pasajero => {
+          this.pasajeros.push(this._auth.getUser(pasajero) as Usuario);
+        });
+        const fecha = new Date(this.viaje.fecha);
+        this.viaje['translatedDate'] = this._viajes.translateDate(fecha);
+        this.gotTheRide = this.viaje.pasajeros.includes(this.usuario.correo);
+        this.didQualified = this._valoracion.userDidRate(this.usuario.correo, this.viaje.id);
       }
     });
-    this.conductor = this._auth.getUser(this.viaje.conductor) as Usuario;
-    this.viaje.pasajeros.forEach(pasajero => {
-      this.pasajeros.push(this._auth.getUser(pasajero) as Usuario);
-    });
-    this.viaje['translatedDate'] = this._viajes.translateDate(this.viaje.fecha);
-    this.gotTheRide = this.viaje.pasajeros.includes(this.usuario.correo);
-    this.didQualified = this._valoracion.userDidRate(this.usuario.correo, this.viaje.id);
     //this.viaje = this._viajes.getViaje(id)
   }
 
