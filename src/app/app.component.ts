@@ -26,8 +26,8 @@ export class AppComponent {
     await this._storage.init();
     await this._auth.loadData();
     await this._viajes.init();
-    await this._report.init();
-    await this._valoracion.init();
+    //await this._report.init();
+    //await this._valoracion.init();
   }
   
 }

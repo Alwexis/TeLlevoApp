@@ -19,14 +19,6 @@ export class ViajesService {
   constructor(private _storage: StorageService, private _auth: AuthService,
     private _db: DbService) { }
 
-  async _init() {
-    this.viajesData = await this._storage.getData('viajes');
-    if (this.viajesData == undefined || this.viajesData == null) {
-      this.viajesData = await this._storage.addData('viajes', { viajes: new Map<string, Viaje>(), lastId: 0 });
-    }
-    return this.viajesData
-  }
-
   async init() {
     const viajes = await this._db.get('viajes') as [];
     this.viajesData = { viajes: new Map(viajes.map((viaje) => [viaje['id'], viaje])), lastId: 0 };
@@ -122,6 +114,7 @@ export class ViajesService {
     if (viajeATomar.capacidad - viajeATomar.pasajeros.length > 0) {
       if (viajeATomar.pasajeros.filter(pasajero => pasajero === user.correo).length === 0) {
         viajeATomar.pasajeros.push(user.correo);
+        await this.syncDataToLocal(user);
         await this._db.updateOne('Viajes', ["id=" + viajeATomar.id], viajeATomar);
         user.viaje = viaje;
         await this._auth.updateUser(user)
@@ -148,6 +141,16 @@ export class ViajesService {
       }
     }
     return false;
+  }
+
+  //? Local data
+  async syncDataToLocal(user: Usuario) {
+    if (await this._storage.getData('viajes') == null) {
+      this._storage.init('viajes', new Map<string, Viaje>());
+    }
+    const viajes = [...this.viajesData.viajes.values()].filter(viaje => viaje.pasajeros.includes(user.correo));
+    const viajesMap = new Map(viajes.map(viaje => [viaje.id, viaje]));
+    await this._storage.addData('viajes', viajesMap);
   }
 
   translateDate(date: Date) {

@@ -98,14 +98,21 @@
               No disponible | ${{viaje.precio}} de Tarifa
             </p>
           </ng-template>
-          <span style="margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
-            <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary); text-align: center;">Detalles
+          <span style="display: flex; align-content: center; justify-content: center; align-items: center; flex-direction: row; margin-top: 1vh; padding: 1.25vh 1vh; border-bottom: 1px solid; border-top: 1px solid;">
+            <p (click)="seeViajeDetails(viaje.id)" style="color: var(--ion-color-primary); margin: 0vh 2.5vh;">Detalles
+            </p>
+            <p (click)="agendar(viaje.id)" style="color: var(--ion-color-success); margin: 0vh 2.5vh;">
+              Agendar
             </p>
           </span>
         </ion-label>
       </ion-item>
     </ng-template>
   </swiper>
+  <div *ngIf="usuario.viaje != null;" style="text-align: center;">
+    <span style="margin-right: 1vh;">¿No encontraste tu destino?</span>
+    <a (click)="changePage('viajes')">Ve la lista de Viajes</a>
+  </div>
   <!--? Fin del Viaje Reservado -->
   <!--? No tiene un Viaje Reservado -->
   <ng-template #doesntHaveViaje>
@@ -144,8 +151,8 @@
       </ng-template>
     </swiper>
     <section *ngIf="lastViajes.length > 0;" style="text-align: center;">
-      <span style="margin-right: 1vh;">¿No encontraste lo que buscabas?</span> <span style="color: blue;">Ve la
-        lista de Viajes</span>
+      <span style="margin-right: 1vh;">¿No encontraste lo que buscabas?</span>
+      <a (click)="changePage('viajes')">Ve la lista de Viajes</a>
     </section>
     <ng-template #notEnoughtViajes>
       <div

@@ -174,5 +174,4 @@ export class HomePage {
   cerrarMenu() {
     this._menu.close('menu');
   }
-
 }
