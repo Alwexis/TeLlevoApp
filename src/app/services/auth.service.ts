@@ -23,10 +23,10 @@ export class AuthService {
     private _http: HttpClient, private _db: DbService) {
   }
 
-  // ! Hay que actualizar todo el servicio para hacerlo en torno a MongoDB (db.service.ts)
+  // ! No eliminar aún; hay que cargar datos offline con LocalStorage :p
   /**
-   * @deprecated
-  */
+   @deprecated
+   */
   async _loadData() {
     this.session = await this._storage.getData('session');
     this.userData = await this._storage.getData('usuarios');
@@ -143,8 +143,8 @@ export class AuthService {
   }
 
   /**
-   * @deprecated
-  */
+    @deprecated
+    */
   async _updateUser(user: Usuario) {
     this.userData.users.set(user.correo, user);
     await this._storage.addData('usuarios', this.userData);
@@ -152,8 +152,8 @@ export class AuthService {
   }
 
   /**
-   * @param { Usuario } user Usuario a actualizar 
-   */
+    @param { Usuario } user Usuario a actualizar 
+    */
   async updateUser(user: Usuario) {
     this._db.updateOne('usuarios', ['correo=' + user.correo], user);
     await this._storage.addData('session', user);
@@ -161,8 +161,8 @@ export class AuthService {
   }
 
   /**
-   * @deprecated
-   */
+    @deprecated
+    */
   async _changePassword(user: Usuario, password) {
     this._encrypt.encrypt(password).subscribe(async (data) => {
       user.contrasena = data['Digest'];
@@ -173,9 +173,9 @@ export class AuthService {
   }
 
   /**
-   * @param { Usuario } user Usuario a actualizar
-   * @param { string } password Nueva contraseña
-   */
+    @param { Usuario } user Usuario a actualizar
+    @param { string } password Nueva contraseña
+    */
   async changePassword(user: Usuario, password: string) {
     const encryptedPwd = this._encrypt.localEncrypt(password);
     user.contrasena = encryptedPwd;

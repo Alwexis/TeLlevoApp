@@ -6,9 +6,9 @@ import { Injectable } from '@angular/core';
 })
 export class DbService {
 
-  private _url = 'http://localhost:3000/';
+  // private _url = 'http://localhost:3000/';
   //? Subir repositorio de la API a Github y hacer deploy en Railway.app. Para volverla una API pública.
-  // private _url = 'https://tellevoappapi-production.up.railway.app'
+  private _url = 'https://tellevoappapi-production.up.railway.app/'
 
   constructor(private _http: HttpClient) { }
 

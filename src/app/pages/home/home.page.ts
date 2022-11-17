@@ -92,6 +92,11 @@ export class HomePage {
         if (e !== BreakException) throw e;
       }
     }
+    await this._viajes.syncDataToLocal(this.usuario);
+  }
+
+  async agendarIfTaken(id) {
+    this._router.navigate(['/viaje'], { queryParams: { id: id } });
   }
 
   async agendar(id) {

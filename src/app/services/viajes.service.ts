@@ -146,11 +146,14 @@ export class ViajesService {
   //? Local data
   async syncDataToLocal(user: Usuario) {
     if (await this._storage.getData('viajes') == null) {
-      this._storage.init('viajes', new Map<string, Viaje>());
+      this._storage.init('viajes', { viajesAgendados: new Map<string, Viaje>(), viajesProgramados: new Map<string, Viaje>() });
     }
     const viajes = [...this.viajesData.viajes.values()].filter(viaje => viaje.pasajeros.includes(user.correo));
     const viajesMap = new Map(viajes.map(viaje => [viaje.id, viaje]));
-    await this._storage.addData('viajes', viajesMap);
+    // Viajes agendados
+    const viajesProgramados = [...this.viajesData.viajes.values()].filter(viaje => viaje.conductor === user.correo);
+    const viajesProgramadosMap = new Map(viajesProgramados.map(viaje => [viaje.id, viaje]));
+    await this._storage.addData('viajes', { viajesAgendados: viajesMap, viajesProgramados: viajesProgramadosMap });
   }
 
   translateDate(date: Date) {
