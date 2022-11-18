@@ -9,6 +9,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { HttpClientModule } from '@angular/common/http';
 
+import { Network } from '@awesome-cordova-plugins/network/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule,
@@ -19,7 +21,10 @@ import { HttpClientModule } from '@angular/common/http';
     }),
     HttpClientModule,
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    Network
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

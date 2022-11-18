@@ -9,6 +9,7 @@ import { Session } from '../interfaces/session';
 import { HttpClient } from '@angular/common/http';
 import { DbService } from './db.service';
 import { RegisterStatus } from '../enums/register-status';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -20,28 +21,33 @@ export class AuthService {
 
   constructor(private _storage: StorageService, private _encrypt: EncrypterService,
     private _router: Router, private _toastCtrl: ToastController, private _alertCtrl: AlertController,
-    private _http: HttpClient, private _db: DbService) {
+    private _http: HttpClient, private _db: DbService,
+    private _network: Network) {
   }
 
   // ! No eliminar aún; hay que cargar datos offline con LocalStorage :p
   /**
    @deprecated
    */
-  async _loadData() {
+  async loadDataOffline() {
     this.session = await this._storage.getData('session');
     this.userData = await this._storage.getData('usuarios');
-    if (this.userData === undefined || this.userData === null) {
+    if (this.userData == undefined || this.userData == null) {
       this.userData = await this._storage.addData('usuarios', { users: new Map<string, {}>() });
     }
     return this.userData;
   }
 
   async loadData() {
-    // Obtengo a los usuarios como una lista y luego la mapeo para que tenga sentido el interface.
-    await this.refreshUsers();
-    const sessionID = await this._storage.getData('session');
-    if (sessionID != null) {
-      this.session.user = this.userData.users.get(sessionID['correo']) as Usuario;
+    if (this._network.type == 'none') {
+      await this.loadDataOffline();
+    } else {
+      // Obtengo a los usuarios como una lista y luego la mapeo para que tenga sentido el interface.
+      await this.refreshUsers();
+      const sessionID = await this._storage.getData('session');
+      if (sessionID != null) {
+        this.session.user = this.userData.users.get(sessionID['correo']) as Usuario;
+      }
     }
   }
 
@@ -87,13 +93,47 @@ export class AuthService {
     location.reload();
   }
 
-  async login(credentials: {}) {
+  async loginOffline(credentials: {}) {
     const alert = await this._alertCtrl.create({ header: '¡Error!', buttons: ['OK'], mode: 'ios', cssClass: 'datoserroneos', });
     if (this.userData.users.has(credentials['correo'])) {
       let user: Usuario = this.userData.users.get(credentials['correo']) as Usuario;
       const encryptedPwd = this._encrypt.localEncrypt(credentials['contrasena'])
       if (user.contrasena === encryptedPwd) {
         this.session = await this._storage.addData('session', user);
+        let toast = await this._toastCtrl.create({
+          message: '¡Bienvenido de vuelta!',
+          duration: 2000,
+          icon: 'enter-outline'
+        });
+        await toast.present();
+        this._router.navigate(['/home']);
+        return LoginState.LOGGED_IN;
+      } else {
+        alert.subHeader = 'Usuario y/o contraseña incorrectos';
+        alert.message = 'Los datos que ha ingresado son incorrectos. Por favor, intente nuevamente.';
+        await alert.present();
+        return LoginState.BAD_CREDENTIALS;
+      }
+    } else {
+      alert.subHeader = 'Usuario no encontrado';
+      alert.message = 'El correo electrónico que ha ingresado no está registrado. Por favor, intente nuevamente.';
+      await alert.present();
+      return LoginState.USER_NOT_FOUND;
+    }
+  }
+
+  async login(credentials: {}) {
+    const alert = await this._alertCtrl.create({ header: '¡Error!', buttons: ['OK'], mode: 'ios', cssClass: 'datoserroneos', });
+    if (this.userData.users.has(credentials['correo'])) {
+      let user: Usuario = this.userData.users.get(credentials['correo']) as Usuario;
+      const encryptedPwd = this._encrypt.localEncrypt(credentials['contrasena'])
+      if (user.contrasena === encryptedPwd) {
+        //? Agregar usuario al caché (LocalStorage)
+        this.session = await this._storage.addData('session', user);
+        let users = await this._storage.getData('usuarios');
+        users.users.set(user.correo, user);
+        this._storage.addData('usuarios', users);
+        //? Fin de caché
         let toast = await this._toastCtrl.create({
           message: '¡Bienvenido de vuelta!',
           duration: 2000,
@@ -131,7 +171,12 @@ export class AuthService {
       if (!this.rutDoesExists(user.rut)) {
         const encryptedPwd = this._encrypt.localEncrypt(credentials['contrasena']);
         user.contrasena = encryptedPwd;
+        //? Agregar usuario al caché (LocalStorage)
         await this._storage.addData('session', user);
+        let users = await this._storage.getData('usuarios');
+        users.users.set(user.correo, user);
+        this._storage.addData('usuarios', users);
+        //? Fin de caché
         this._db.insertOne('Usuarios', user);
         await this.refreshUsers();
         this._router.navigate(['/home']);
