@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   async loadData() {
-    if (this._network.type == 'none') {
+    if (this._network.type.includes('none')) {
       await this.loadDataOffline();
     } else {
       // Obtengo a los usuarios como una lista y luego la mapeo para que tenga sentido el interface.
@@ -123,6 +123,9 @@ export class AuthService {
   }
 
   async login(credentials: {}) {
+    if (this._network.type.includes('none')) {
+      return this.loginOffline(credentials);
+    }
     const alert = await this._alertCtrl.create({ header: '¡Error!', buttons: ['OK'], mode: 'ios', cssClass: 'datoserroneos', });
     if (this.userData.users.has(credentials['correo'])) {
       let user: Usuario = this.userData.users.get(credentials['correo']) as Usuario;
@@ -131,7 +134,12 @@ export class AuthService {
         //? Agregar usuario al caché (LocalStorage)
         this.session = await this._storage.addData('session', user);
         let users = await this._storage.getData('usuarios');
-        users.users.set(user.correo, user);
+        if (users) {
+          users.users.set(user.correo, user);
+        } else {
+          users = { users: new Map<string, {}>() };
+          users.users.set(user.correo, user);
+        }
         this._storage.addData('usuarios', users);
         //? Fin de caché
         let toast = await this._toastCtrl.create({
