@@ -11,4 +11,5 @@ export interface Usuario {
     foto: string;
     viaje: number | null; // ID del viaje actual
     numero: number | null;
+    tutoriales: {};
 }

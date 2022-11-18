@@ -22,6 +22,7 @@ export class TusViajesPage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
+    tutoriales: {},
   }
 
   viajes = [];
@@ -49,8 +50,7 @@ export class TusViajesPage implements OnInit {
 
   async loadData() {
     this.usuario = await this._auth.getSession();
-    let viajes = await this._viajes.get();
-    viajes.viajes.forEach(viaje => {
+    this._viajes.get().viajes.forEach(viaje => {
       if (viaje.conductor === this.usuario.correo) {
         let viajeRaw = viaje;
         viajeRaw['translatedDate'] = this._viajes.translateDate(new Date(viajeRaw.fecha.toString()));

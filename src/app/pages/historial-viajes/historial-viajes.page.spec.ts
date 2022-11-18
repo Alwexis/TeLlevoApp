@@ -1,7 +1,5 @@
-import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-import { IonicStorageModule } from '@ionic/storage-angular';
 
 import { HistorialViajesPage } from './historial-viajes.page';
 
@@ -12,7 +10,7 @@ describe('HistorialViajesPage', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ HistorialViajesPage ],
-      imports: [IonicModule.forRoot(), IonicStorageModule.forRoot(), HttpClientModule ]
+      imports: [IonicModule.forRoot()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(HistorialViajesPage);

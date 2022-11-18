@@ -23,6 +23,7 @@ export class PerfilOtrosPage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
+    tutoriales: {},
   }
   //? Usuario a mostrar
   usuarioAMostrar: Usuario = {
@@ -34,6 +35,7 @@ export class PerfilOtrosPage implements OnInit {
     foto: '',
     viaje: null,
     numero: null,
+    tutoriales: {},
   }
 
   valoracion = [];
@@ -60,7 +62,7 @@ export class PerfilOtrosPage implements OnInit {
       if (params) this.usuarioAMostrar = this._auth.getUser(params.correo) as Usuario;
     });
     //? Cargar valoración
-    this.valoracion = await this._valoracion.getValoracion(this.usuarioAMostrar);
+    this.valoracion = this._valoracion.getValoracion(this.usuarioAMostrar);
     //this.valoracion = this._valoracion.getValoracion(this.usuario);
     //console.log(this.valoracion.constructor)
   }

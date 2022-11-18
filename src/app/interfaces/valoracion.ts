@@ -7,6 +7,6 @@ export interface Valoracion {
 }
 
 export interface Valoraciones {
-    valoraciones: Map<string, Valoracion>;
+    valoraciones: Valoracion[];
     lastId: number;
 }

@@ -23,31 +23,14 @@ export class AuthService {
     private _http: HttpClient, private _db: DbService) {
   }
 
-  // ! No eliminar aún; hay que cargar datos offline con LocalStorage :p
-  /**
-   @deprecated
-   */
-  async _loadData() {
+  // ! Hay que actualizar todo el servicio para hacerlo en torno a MongoDB (db.service.ts)
+  async loadData() {
     this.session = await this._storage.getData('session');
     this.userData = await this._storage.getData('usuarios');
-    if (this.userData === undefined || this.userData === null) {
+    if (this.userData == undefined || this.userData == null) {
       this.userData = await this._storage.addData('usuarios', { users: new Map<string, {}>() });
     }
     return this.userData;
-  }
-
-  async loadData() {
-    // Obtengo a los usuarios como una lista y luego la mapeo para que tenga sentido el interface.
-    await this.refreshUsers();
-    const sessionID = await this._storage.getData('session');
-    if (sessionID != null) {
-      this.session.user = this.userData.users.get(sessionID['correo']) as Usuario;
-    }
-  }
-
-  async refreshUsers() {
-    const usuarios = await this._db.get('Usuarios') as [];
-    this.userData = { users: new Map(usuarios.map((user) => [user['correo'], user])) };
   }
 
   getUser(email: string) {
@@ -62,7 +45,7 @@ export class AuthService {
     if (this.session == null) {
       this.session = await this._storage.getData('session');
     }
-    const user: Usuario = {
+    let user: Usuario = {
       correo: this.session['correo'],
       rut: this.session['rut'],
       nombre: this.session['nombre'],
@@ -71,14 +54,15 @@ export class AuthService {
       foto: this.session['foto'],
       viaje: this.session['viaje'],
       numero: this.session['numero'],
-    };
+      tutoriales: this.session['tutoriales'],
+    }
     return user;
   }
 
   async logout() {
     await this._storage.removeData('session', 0);
     this._router.navigate(['/login']);
-    const toast = await this._toastCtrl.create({
+    let toast = await this._toastCtrl.create({
       message: '¡Hasta pronto!',
       duration: 2000,
       icon: 'exit-outline'
@@ -91,23 +75,24 @@ export class AuthService {
     const alert = await this._alertCtrl.create({ header: '¡Error!', buttons: ['OK'], mode: 'ios', cssClass: 'datoserroneos', });
     if (this.userData.users.has(credentials['correo'])) {
       let user: Usuario = this.userData.users.get(credentials['correo']) as Usuario;
-      const encryptedPwd = this._encrypt.localEncrypt(credentials['contrasena'])
-      if (user.contrasena === encryptedPwd) {
-        this.session = await this._storage.addData('session', user);
-        let toast = await this._toastCtrl.create({
-          message: '¡Bienvenido de vuelta!',
-          duration: 2000,
-          icon: 'enter-outline'
-        });
-        await toast.present();
-        this._router.navigate(['/home']);
-        return LoginState.LOGGED_IN;
-      } else {
-        alert.subHeader = 'Usuario y/o contraseña incorrectos';
-        alert.message = 'Los datos que ha ingresado son incorrectos. Por favor, intente nuevamente.';
-        await alert.present();
-        return LoginState.BAD_CREDENTIALS;
-      }
+      this._encrypt.encrypt(credentials['contrasena']).subscribe(async (encryptedPwd) => {
+        if (user.contrasena == encryptedPwd['Digest']) {
+          this.session = await this._storage.addData('session', user);
+          let toast = await this._toastCtrl.create({
+            message: '¡Bienvenido de vuelta!',
+            duration: 2000,
+            icon: 'enter-outline'
+          });
+          await toast.present();
+          this._router.navigate(['/home']);
+          return LoginState.LOGGED_IN;
+        } else {
+          alert.subHeader = 'Usuario y/o contraseña incorrectos';
+          alert.message = 'Los datos que ha ingresado son incorrectos. Por favor, intente nuevamente.';
+          await alert.present();
+          return LoginState.BAD_CREDENTIALS;
+        }
+      });
     } else {
       alert.subHeader = 'Usuario no encontrado';
       alert.message = 'El correo electrónico que ha ingresado no está registrado. Por favor, intente nuevamente.';
@@ -126,15 +111,24 @@ export class AuthService {
       foto: '',
       viaje: null,
       numero: null,
+      tutoriales: {
+        agendarViaje: false,
+        programarViaje: false,
+        editarViaje: false,
+        perfilOtros: false,
+      },
     }
     if (!this.userData.users.has(user.correo)) {
       if (!this.rutDoesExists(user.rut)) {
-        const encryptedPwd = this._encrypt.localEncrypt(credentials['contrasena']);
-        user.contrasena = encryptedPwd;
-        await this._storage.addData('session', user);
-        this._db.insertOne('Usuarios', user);
-        await this.refreshUsers();
-        this._router.navigate(['/home']);
+        this._encrypt.encrypt(credentials['contrasena']).subscribe(async (data) => {
+          user.contrasena = data['Digest'];
+          this.userData.users.set(user.correo, user);
+          await this._storage.addData('usuarios', this.userData);
+          await this._storage.addData('session', user);
+          //! No se puede conectar a MongoDB aquí.
+          //this._db.insertOne('usuarios', user);
+          this._router.navigate(['/home']);
+        });
         return RegisterStatus.SUCCESSFUL;
       }
       return RegisterStatus.RUT_ALREADY_EXISTS;
@@ -142,28 +136,13 @@ export class AuthService {
     return RegisterStatus.ALREADY_REGISTERED;
   }
 
-  /**
-    @deprecated
-    */
-  async _updateUser(user: Usuario) {
+  async updateUser(user: Usuario) {
     this.userData.users.set(user.correo, user);
     await this._storage.addData('usuarios', this.userData);
     await this._storage.addData('session', user);
   }
 
-  /**
-    @param { Usuario } user Usuario a actualizar 
-    */
-  async updateUser(user: Usuario) {
-    this._db.updateOne('usuarios', ['correo=' + user.correo], user);
-    await this._storage.addData('session', user);
-    await this.refreshUsers();
-  }
-
-  /**
-    @deprecated
-    */
-  async _changePassword(user: Usuario, password) {
+  async changePassword(user: Usuario, password) {
     this._encrypt.encrypt(password).subscribe(async (data) => {
       user.contrasena = data['Digest'];
       this.userData.users.set(user.correo, user);
@@ -172,28 +151,19 @@ export class AuthService {
     });
   }
 
-  /**
-    @param { Usuario } user Usuario a actualizar
-    @param { string } password Nueva contraseña
-    */
-  async changePassword(user: Usuario, password: string) {
-    const encryptedPwd = this._encrypt.localEncrypt(password);
-    user.contrasena = encryptedPwd;
-    this._db.updateOne('Usuarios', ['correo=' + user.correo], user);
-    await this.refreshUsers();
-  }
-
   userDoesExists(email: string) {
     return this.userData.users.has(email);
   }
 
   rutDoesExists(rut: string) {
+    let existe = false;
     for (let usuario of this.userData.users.keys()) {
       if (this.userData.users.get(usuario)['rut'] == rut) {
-        return true;
+        existe = true;
+        break;
       }
     }
-    return false;
+    return existe;
   }
 
   async verifyMail(email: string, code: string, username: string) {
