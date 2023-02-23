@@ -1,0 +1,20 @@
+<div class="thumbnail">
+    <img src="https://github.com/Alwexis/TeLlevoApp/blob/main/HTML_Template/assets/icon.png?raw=true">
+</div>
+<div class="content">
+    <p>
+        A semester Project that we made for the Mobile App Development subject on the university. It's a ride sharing app that allows you to share your ride with other people.
+        The app was made using Ionic Framework and NodeJS & MongoDB for the backend.
+
+        The App were made by <a href="https://github.com/jeconuel" target="_blank">@Jenniffer Coñuel</a> & <a href="https://github.com/Alwexis" target="_blank">@me</a>.
+    </p>
+
+    <div class="button-container">
+        <a href="https://github.com/Alwexis/TeLlevoApp" target="_blank">
+            Source Code
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/>
+            </svg>
+        </a>
+    </div>
+</div>
